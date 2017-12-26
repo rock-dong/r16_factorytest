@@ -11,10 +11,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 //import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -64,6 +66,13 @@ public class TestEntry extends JFrame{
 	JLabel acceTestResult1 = new JLabel("");
 	JLabel acceTestResult2 = new JLabel("");
 	
+	JLabel logline0 = new JLabel("");
+	JLabel logline1 = new JLabel("");
+	JLabel logline2 = new JLabel("");
+	JLabel logline3 = new JLabel("");
+	JLabel logline4 = new JLabel("");
+	JLabel logline5 = new JLabel("");
+	
 	boolean onlyOnce = false;
 	int volumeGlobal = 0;
 	
@@ -84,7 +93,8 @@ public class TestEntry extends JFrame{
     
     static Test_Type testState = Test_Type.NONE;
     
-    FileOutputStream in;
+    static FileOutputStream in;
+    String jarPath;
     
 	public TestEntry() {
 		
@@ -94,16 +104,25 @@ public class TestEntry extends JFrame{
             public void run() {  
                 //程序结束时进行的操作  
                 System.out.println("程序结束调用");  
-                /*
+                
                 try {
                 in.close();
                 }catch (IOException e) {
                 	e.printStackTrace();
                 }
-                */
+                
             }  
-        }); 
+        });  
         
+        String jarWholePath = TestEntry.class.getProtectionDomain().getCodeSource().getLocation().getFile();  
+		try {  
+		    jarWholePath = java.net.URLDecoder.decode(jarWholePath, "UTF-8");  
+		} catch (UnsupportedEncodingException e) {
+			System.out.println(e.toString()); 
+		}  
+		
+		jarPath = new File(jarWholePath).getParentFile().getAbsolutePath(); 
+		
 		deleteCameraFiles();
 		
 		createLogFile();
@@ -135,6 +154,17 @@ public class TestEntry extends JFrame{
 		});
 		add(usbTestResult);
 		usbTestResult.setBounds(220, 30, 120, 25);
+		
+		add(logline0);
+		logline0.setBounds(350, 30, 600, 25);
+		add(logline1);
+		logline1.setBounds(350, 60, 600, 25);
+		add(logline2);
+		logline2.setBounds(350, 90, 600, 25);
+		add(logline3);
+		logline3.setBounds(350, 120, 600, 25);
+		add(logline4);
+		logline4.setBounds(350, 150, 600, 25);
 		
 		add(audioTestTitle);
 		audioTestTitle.setBounds(30, 60, 80, 25);
@@ -645,6 +675,7 @@ public class TestEntry extends JFrame{
     	        System.out.println(line);  
     	        if (line.contains("video0")){
     	        	System.out.println("find camera driver");
+    	        	writeLog("find camera driver");
     	        	ret = true;    	        	                    	        	
     	        	break;
     	        } 
@@ -671,6 +702,7 @@ public class TestEntry extends JFrame{
     	    	
     	System.out.println(command);
     	
+    	writeLog("startCameraCapture ....");
     	
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -681,7 +713,8 @@ public class TestEntry extends JFrame{
     	    while(line != null) {
     	        System.out.println(line);  
     	        if (line.endsWith("finish!")){
-    	        	ret = true;    	        	                    	        	
+    	        	ret = true;   
+    	        	writeLog("cameratest cmd ok");
     	        	break;
     	        } 
     	        line = bufferedReader.readLine();
@@ -692,23 +725,27 @@ public class TestEntry extends JFrame{
     	    
     	}catch(Exception e) {
     	    e.printStackTrace();
+    	    writeLog(e.toString());
     	}
     	
     	try{
     		Thread.sleep(500);
     	} catch (InterruptedException e) {
     		e.printStackTrace();
+    		writeLog(e.toString());
     	}
     	
     	if( !ret ){
     		testState = Test_Type.NONE;
     		System.out.println("camera capture fail");
+    		writeLog("cameratest fail");
     		return ret;
     	}
     	
-    	ret = false;
+    	//ret = false;
+    	writeLog("ignore adb result check");
     	
-    	command = "adb pull /tmp/source_data1.yuv";
+    	command = "adb pull /tmp/source_data1.yuv " + jarPath;
     	System.out.println(command);
     	
     	try {
@@ -721,6 +758,7 @@ public class TestEntry extends JFrame{
     	        System.out.println(line);  
     	        if (line.endsWith("s)")){  	
     	        	ret = true;
+    	        	//writeLog("adb pull yuv ok");
     	        	break;
     	        } 
     	        line = bufferedReader.readLine();
@@ -731,9 +769,8 @@ public class TestEntry extends JFrame{
     	    
     	}catch(Exception e) {
     	    e.printStackTrace();
+    	    writeLog(e.toString());
     	}
-    	
-    	
     	
     	testState = Test_Type.NONE;
     	
@@ -742,17 +779,18 @@ public class TestEntry extends JFrame{
 	
 	private void deleteCameraFiles() {
 		System.out.println("deleteCameraFiles ...");
-		File file = new File("source_data1.yuv"); // The input NV21 file
+		//writeLog("deleteCameraFiles ...");
+		File file = new File(jarPath + "\\source_data1.yuv"); // The input NV21 file
 		if (file.exists()){
 		    delete(file);
 		}
 		
-		file = new File("nv21.bmp");
+		file = new File(jarPath + "\\nv21.bmp");
 		if (file.exists()){
 		    delete(file);
 		}
 		
-		file = new File("log.txt");
+		file = new File(jarPath + "\\javalog.txt");
 		if (file.exists()){
 		    delete(file);
 		}
@@ -760,28 +798,32 @@ public class TestEntry extends JFrame{
 	
 	private void createLogFile()
 	{
-		/*logfile = new File("log.txt");  
-        try {  
+		logfile = new File(jarPath + "\\javalog.txt");
+		
+		logline0.setText(jarPath);
+		try {  
+        	
             logfile.createNewFile(); // 创建文件  
+            
         } catch (IOException e) {  
             // TODO Auto-generated catch block  
-            e.printStackTrace();  
+            e.printStackTrace();
+                        
         } 
         
         try {
-             in = new FileOutputStream(logfile);
+            in = new FileOutputStream(logfile);
         }catch (FileNotFoundException e) {  
-            // TODO Auto-generated catch block  
-            e.printStackTrace();  
+           // TODO Auto-generated catch block  
+           e.printStackTrace();  
         } 
-        */
 	}
 	
 		
-	private void writeLog(String str) {
+	public static void writeLog(String str) {
 		
         
-		/*
+		
         long time = System.currentTimeMillis();
         
             
@@ -798,13 +840,13 @@ public class TestEntry extends JFrame{
                 // TODO Auto-generated catch block  
                 e.printStackTrace();  
             }  
-        */ 
+         
 	}
 	
 	
 	public boolean convertYuvToBmp() {
 		writeLog("covertYuvToBmp +++");
-		File file = new File("source_data1.yuv"); // The input NV21 file
+		File file = new File(jarPath + "\\source_data1.yuv"); // The input NV21 file
 		if (!file.exists()){
 			writeLog("covertYuvToBmp not found---");
 			return false;
@@ -821,11 +863,12 @@ public class TestEntry extends JFrame{
 
 			int[] data = NV21.yuv2rgb(bytes, width, height);
 			BMP bmp = new BMP(width, height, pixelBits, data);
-			bmp.saveBMP("nv21.bmp"); // The output BMP file
+			bmp.saveBMP(jarPath + "\\nv21.bmp"); // The output BMP file
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			writeLog(e.toString());
 			writeLog("covertYuvToBmp io exception");
 			return false;
 		}
@@ -839,6 +882,7 @@ public class TestEntry extends JFrame{
 	public void showBmp(){
 
 		System.out.println("shouwBmp ...");
+		writeLog("showBmp ...");
 /*
 		MyPanel mp =new MyPanel();
 
@@ -874,7 +918,7 @@ public class TestEntry extends JFrame{
         	System.out.println("paint ...");
 	        try {
 
-	        	File bmpfile = new File("nv21.bmp");
+	        	File bmpfile = new File(jarPath + "\\nv21.bmp");
 	        	if(bmpfile.exists()){
 	                image=ImageIO.read(bmpfile);
 
@@ -1376,8 +1420,10 @@ public class TestEntry extends JFrame{
 						String deviceList = getAdbDevices();
 						if(deviceList == null || deviceList.isEmpty() ){
 						    cameraTestResult.setText(audioTestCnt + " 失败，USB未连接");
+						    writeLog("usb connect fail");
 						} else {
 							if(checkCameraDriver()) {
+								writeLog("find video0 driver");
 						        removeYuvInDevice();
 						        if(startCameraCapture()){
 						        	writeLog("capture ok");
@@ -1388,10 +1434,10 @@ public class TestEntry extends JFrame{
 						            
 						            }
 						        }else {
-						    
+						            writeLog("fail to capture");
 						        }
 							}else {
-								
+								writeLog("fail to find camera video0 driver");
 							}
 						}
 						flashqueue.put("stop");

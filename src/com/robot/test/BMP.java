@@ -101,6 +101,8 @@ public class BMP {
 
 	public void saveBMP(String fileName) {
 		FileOutputStream out;
+		TestEntry.writeLog(fileName);
+		TestEntry.writeLog("saveBMP");
 		try {
 			out = new FileOutputStream(fileName);
 			out.write(getFile());
@@ -109,9 +111,11 @@ public class BMP {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			TestEntry.writeLog(e.toString());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			TestEntry.writeLog(e.toString());
 		}
 	}
 
