@@ -73,6 +73,14 @@ public class TestEntry extends JFrame{
 	JLabel logline4 = new JLabel("");
 	JLabel logline5 = new JLabel("");
 	
+	JLabel uart1TestTitle = new JLabel("串口 1");
+	JButton uart1TestBt = new JButton("开始测试");
+	JLabel uart1TestResult = new JLabel();
+	
+	JLabel uart2TestTitle = new JLabel("串口 2");
+	JButton uart2TestBt = new JButton("开始测试");
+	JLabel uart2TestResult = new JLabel();
+	
 	boolean onlyOnce = false;
 	int volumeGlobal = 0;
 	
@@ -84,6 +92,9 @@ public class TestEntry extends JFrame{
 	int usbTestCnt = 0;	
 	int audioTestCnt = 0;
 	int cameraTestCnt = 0;
+	int uart1TestCnt = 0;
+	int uart2TestCnt = 0;
+	
 	int audioFlashCnt = 0;
 	int cameraFlashCnt = 0;
 	
@@ -127,7 +138,7 @@ public class TestEntry extends JFrame{
 		
 		createLogFile();
 		
-		setSize(1200, 1000);
+		setSize(700, 700);
 		setLocation(300, 300);
 		setTitle("工厂测试");
 		setLayout(null);
@@ -296,16 +307,16 @@ public class TestEntry extends JFrame{
 		
 		add(cameraArea);
         
-        cameraArea.setBounds(220, 150, 640, 480);
+        cameraArea.setBounds(220, 150, 320, 240);
         add(cameraTestResult);
         cameraTestResult.setBounds(115, 180, 100, 25);
 		//add(cameraShow);
 		//cameraShow.setBounds(220, 150, 320, 240);
 		
 		add(gyroTestTitle);
-		gyroTestTitle.setBounds(30, 650, 80, 25);
+		gyroTestTitle.setBounds(30, 400, 80, 25);
         add(gyroTestBt);
-        gyroTestBt.setBounds(115, 650, 100, 25);
+        gyroTestBt.setBounds(115, 400, 100, 25);
         gyroTestBt.setBackground(Color.green);
         gyroTestBt.addActionListener(new ActionListener() {
 			@Override
@@ -325,22 +336,22 @@ public class TestEntry extends JFrame{
 		});
         
         add(gyroTestResult0);
-        gyroTestResult0.setBounds(220, 650, 100, 25);
+        gyroTestResult0.setBounds(220, 400, 100, 25);
         add(gyroTestResult1);
-        gyroTestResult1.setBounds(220, 680, 100, 25);
+        gyroTestResult1.setBounds(220, 430, 100, 25);
         add(gyroTestResult2);
-        gyroTestResult2.setBounds(220, 710, 100, 25);
+        gyroTestResult2.setBounds(220, 460, 100, 25);
         
         
         add(acceTestTitle);
-		acceTestTitle.setBounds(30, 750, 80, 25);
+		acceTestTitle.setBounds(30, 500, 80, 25);
         add(acceTestBt);
-        acceTestBt.setBounds(115, 750, 100, 25);
+        acceTestBt.setBounds(115, 500, 100, 25);
         acceTestBt.setBackground(Color.green);
         acceTestBt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e){
-				System.out.println("camera capture");
+				System.out.println("acce test");
 				if(testState != Test_Type.NONE) {
 					acceTestResult0.setText("测试中，请稍后");
 				}else {
@@ -355,11 +366,59 @@ public class TestEntry extends JFrame{
 		});
         
         add(acceTestResult0);
-        acceTestResult0.setBounds(220, 750, 100, 25);
+        acceTestResult0.setBounds(220, 500, 100, 25);
         add(acceTestResult1);
-        acceTestResult1.setBounds(220, 780, 100, 25);
+        acceTestResult1.setBounds(220, 530, 100, 25);
         add(acceTestResult2);
-        acceTestResult2.setBounds(220, 810, 100, 25);
+        acceTestResult2.setBounds(220, 560, 100, 25);
+        
+        add(uart1TestTitle);
+        uart1TestTitle.setBounds(30, 590, 80, 25);
+        add(uart1TestBt);
+        uart1TestBt.setBounds(115, 590, 100, 25);
+        uart1TestBt.setBackground(Color.green);
+        uart1TestBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.out.println("uart1 test");
+				if(testState != Test_Type.NONE) {
+					uart1TestResult.setText("测试中，请稍后");
+				}else {
+				    try {
+					    queue.put("uart1 test");
+				    } catch (InterruptedException e1) {
+					    // TODO Auto-generated catch block
+					    e1.printStackTrace();
+				    }
+				}
+			}
+		});
+        add(uart1TestResult);
+        uart1TestResult.setBounds(220, 590, 100, 25);
+        
+        add(uart2TestTitle);
+        uart2TestTitle.setBounds(30, 620, 80, 25);
+        add(uart2TestBt);
+        uart2TestBt.setBounds(115, 620, 100, 25);
+        uart2TestBt.setBackground(Color.green);
+        uart2TestBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.out.println("uart2 test");
+				if(testState != Test_Type.NONE) {
+					uart1TestResult.setText("测试中，请稍后");
+				}else {
+				    try {
+					    queue.put("uart2 test");
+				    } catch (InterruptedException e1) {
+					    // TODO Auto-generated catch block
+					    e1.printStackTrace();
+				    }
+				}
+			}
+		});
+        add(uart2TestResult);
+        uart2TestResult.setBounds(220, 620, 100, 25);
         
         
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -924,12 +983,12 @@ public class TestEntry extends JFrame{
 
 	                //g.drawImage(image, 220, 150, 640, 480, null);
                     if(image != null) {
-	                    g.drawImage(image, 0, 0, 640, 480, null);
+	                    g.drawImage(image, 0, 0, 320, 240, null);
                     }else {
-                        g.clearRect(0, 0, 640, 480);
+                        g.clearRect(0, 0, 320, 240);
                     }
 	        	}else {
-	        		g.clearRect(0, 0, 640, 480);
+	        		g.clearRect(0, 0, 320, 240);
 	        	}
 
 	        } catch (Exception e) {
@@ -1197,7 +1256,81 @@ public class TestEntry extends JFrame{
 	}
 	
 	
+	public boolean uart1test() {
+		boolean ret = false;
+		String command = "adb shell mincomtest";
+		testState = Test_Type.GSENSOR_TEST;
+    	
+    	System.out.println(command);
+    	try {
+    	    Process process = Runtime.getRuntime().exec(command);
+    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	   
+    	    String line = bufferedReader.readLine();
+    	   
+    	    while(line != null) {
+    	        System.out.println(line);  
+    	        if (line.contains("uart 1 test success")){
+    	        	System.out.println("uart 1 test pass");
+    	        	ret = true;    	        	                    	        	
+    	        	break;
+    	        } else if (line.contains("uart 1 test fail")) {
+    	        	System.out.println("uart 1 test fail");
+    	        	ret = false;    	        	                    	        	
+    	        	break;
+    	        }
+    	        line = bufferedReader.readLine();
+    	    }
+    	    System.out.println("adb print end");
+    	    process.destroy();
+    	        	    
+    	    
+    	}catch(Exception e) {
+    	    e.printStackTrace();
+    	}
+    	
+        testState = Test_Type.NONE;
+    	
+    	return ret;
+	}
 	
+	public boolean uart2test() {
+		boolean ret = false;
+		String command = "adb shell mincomtest";
+		testState = Test_Type.GSENSOR_TEST;
+    	
+    	System.out.println(command);
+    	try {
+    	    Process process = Runtime.getRuntime().exec(command);
+    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	   
+    	    String line = bufferedReader.readLine();
+    	   
+    	    while(line != null) {
+    	        System.out.println(line);  
+    	        if (line.contains("uart 2 test success")){
+    	        	System.out.println("uart 1 test pass");
+    	        	ret = true;    	        	                    	        	
+    	        	break;
+    	        } else if (line.contains("uart 2 test fail")) {
+    	        	System.out.println("uart 2 test fail");
+    	        	ret = false;    	        	                    	        	
+    	        	break;
+    	        }
+    	        line = bufferedReader.readLine();
+    	    }
+    	    System.out.println("adb print end");
+    	    process.destroy();
+    	        	    
+    	    
+    	}catch(Exception e) {
+    	    e.printStackTrace();
+    	}
+    	
+        testState = Test_Type.NONE;
+    	
+    	return ret;
+	}
 	
 	/*
 	public static class TestTimeTask extends TimerTask{  
@@ -1494,6 +1627,39 @@ public class TestEntry extends JFrame{
 				    	break;
 				    }
 				    
+				    case "uart1 test" : {
+				    	uart1TestBt.setEnabled(false);
+				    	uart1TestBt.setBackground(Color.blue);
+				    	uart1TestCnt++;
+				    	
+				    	if(uart1test()){
+				    		uart1TestResult.setText(uart1TestCnt + " 成功 ");
+				    	} else {
+				    		uart1TestResult.setText(uart1TestCnt + " 失败");
+				    	}
+				    	
+				    	uart1TestBt.setEnabled(true);
+				    	uart1TestBt.setBackground(Color.green);
+				    	
+				    	break;
+				    }
+				    
+				    case "uart2 test" : {
+				    	uart2TestBt.setEnabled(false);
+				    	uart2TestBt.setBackground(Color.blue);
+				    	uart2TestCnt++;
+				    	
+				    	if(uart2test()){
+				    		uart2TestResult.setText(uart2TestCnt + " 成功 ");
+				    	} else {
+				    		uart2TestResult.setText(uart2TestCnt + " 失败");
+				    	}
+				    	
+				    	uart2TestBt.setEnabled(true);
+				    	uart2TestBt.setBackground(Color.green);
+				    	
+				    	break;
+				    }
 				}
 				
 	
