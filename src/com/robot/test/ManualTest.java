@@ -3,6 +3,7 @@ package com.robot.test;
 
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -33,11 +34,11 @@ public class ManualTest extends JFrame {
 
 	private final boolean testOnGoing = true;
 	JLabel usbTestTitle =  new JLabel("USB 连接");
-	JButton usbTestBt = new JButton("开始测试");
+	JButton usbTestBt = new JButton("测试");
 	JLabel usbTestResult = new JLabel("");
 	
 	JLabel audioTestTitle =  new JLabel("声音");
-	JButton audioTestBt = new JButton("开始测试");
+	JButton audioTestBt = new JButton("测试");
 	JLabel audioTestResult = new JLabel("");
 	
 	JButton volume0Bt = new JButton("");
@@ -52,18 +53,18 @@ public class ManualTest extends JFrame {
 	JLabel volumeResult = new JLabel("");
 	
 	JLabel cameraTestTitle = new JLabel("摄像头");
-	JButton cameraTestBt = new JButton("开始测试");
+	JButton cameraTestBt = new JButton("测试");
 	JLabel cameraTestResult = new JLabel("");
 	MyPanel cameraArea = new MyPanel();
 	
 	JLabel gyroTestTitle = new JLabel("角速度");
-	JButton gyroTestBt = new JButton("开始测试");
+	JButton gyroTestBt = new JButton("测试");
 	JLabel gyroTestResult0 = new JLabel(""); 
 	JLabel gyroTestResult1 = new JLabel("");
 	JLabel gyroTestResult2 = new JLabel("");
 	
 	JLabel acceTestTitle = new JLabel("加速度");
-	JButton acceTestBt = new JButton("开始测试");
+	JButton acceTestBt = new JButton("测试");
 	JLabel acceTestResult0 = new JLabel(""); 
 	JLabel acceTestResult1 = new JLabel("");
 	JLabel acceTestResult2 = new JLabel("");
@@ -76,12 +77,15 @@ public class ManualTest extends JFrame {
 	JLabel logline5 = new JLabel("");
 	
 	JLabel uart1TestTitle = new JLabel("串口 1");
-	JButton uart1TestBt = new JButton("开始测试");
+	JButton uart1TestBt = new JButton("测试");
 	JLabel uart1TestResult = new JLabel();
 	
 	JLabel uart2TestTitle = new JLabel("串口 2");
-	JButton uart2TestBt = new JButton("开始测试");
+	JButton uart2TestBt = new JButton("测试");
 	JLabel uart2TestResult = new JLabel();
+	
+	JLabel chipIdTitle = new JLabel("SN");
+	JLabel chipidInfo = new JLabel("");
 	
 	boolean onlyOnce = false;
 	int volumeGlobal = 0;
@@ -116,11 +120,25 @@ public class ManualTest extends JFrame {
 			setTitle("单项测试");
 			setLayout(null);
 			
+			add(chipIdTitle);
+	        chipIdTitle.setBounds(30, 0, 80, 50);
+	        chipIdTitle.setFont(new Font("Dialog", 1, 20));
+	        chipIdTitle.setForeground(Color.red);
+	        
+	        add(chipidInfo);
+	        chipidInfo.setBounds(115, 0, 400, 50);
+	        chipidInfo.setFont(new Font("Dialog", 1, 20));
+	        chipidInfo.setForeground(Color.red);
+	        
 			add(usbTestTitle);
-			usbTestTitle.setBounds(30, 30, 80, 25);
+			usbTestTitle.setBounds(30, 60, 80, 25);
+			usbTestTitle.setFont(new Font("Dialog", 1, 15));
+			
+	        
 			add(usbTestBt);
-			usbTestBt.setBounds(115, 30, 100, 25);
+			usbTestBt.setBounds(115, 60, 100, 25);
 			usbTestBt.setBackground(Color.green);
+			usbTestBt.setFont(new Font("Dialog", 1, 15));
 			usbTestBt.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e){
@@ -138,24 +156,27 @@ public class ManualTest extends JFrame {
 				}
 			});
 			add(usbTestResult);
-			usbTestResult.setBounds(220, 30, 120, 25);
+			usbTestResult.setBounds(220, 60, 120, 25);
+			usbTestResult.setFont(new Font("Dialog", 1, 15));
 			
 			add(logline0);
-			logline0.setBounds(350, 30, 600, 25);
+			logline0.setBounds(350, 60, 600, 25);
 			add(logline1);
-			logline1.setBounds(350, 60, 600, 25);
+			logline1.setBounds(350, 90, 600, 25);
 			add(logline2);
-			logline2.setBounds(350, 90, 600, 25);
+			logline2.setBounds(350, 120, 600, 25);
 			add(logline3);
-			logline3.setBounds(350, 120, 600, 25);
+			logline3.setBounds(350, 150, 600, 25);
 			add(logline4);
-			logline4.setBounds(350, 150, 600, 25);
+			logline4.setBounds(350, 180, 600, 25);
 			
 			add(audioTestTitle);
-			audioTestTitle.setBounds(30, 60, 80, 25);
+			audioTestTitle.setBounds(30, 90, 80, 25);
+			audioTestTitle.setFont(new Font("Dialog", 1, 15));
 			add(audioTestBt);
-			audioTestBt.setBounds(115, 60, 100, 25);
+			audioTestBt.setBounds(115, 90, 100, 25);
 			audioTestBt.setBackground(Color.green);
+			audioTestBt.setFont(new Font("Dialog", 1, 15));
 			audioTestBt.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e){
@@ -173,39 +194,40 @@ public class ManualTest extends JFrame {
 				}
 			});
 			add(audioTestResult);
-			audioTestResult.setBounds(220, 60, 120, 25);
-			
+			audioTestResult.setBounds(220, 90, 120, 25);
+			audioTestResult.setFont(new Font("Dialog", 1, 15));
 			
 			add(volume0Bt);
-			volume0Bt.setBounds(115, 90, 20, 25);
+			volume0Bt.setBounds(115, 120, 20, 25);
 	        volume0Bt.setBackground(Color.blue);
 			volume0Bt.setBorderPainted(false);
 			volume0Bt.setFocusPainted(false);
 			volume0Bt.setEnabled(false);
 			
+			
 			add(volume1Bt);
-			volume1Bt.setBounds(135, 90, 20, 25);
+			volume1Bt.setBounds(135, 120, 20, 25);
 			volume1Bt.setBackground(Color.blue);
 			volume1Bt.setBorderPainted(false);
 			volume1Bt.setFocusPainted(false);
 			volume1Bt.setEnabled(false);
 			
 			add(volume2Bt);
-			volume2Bt.setBounds(155, 90, 20, 25);
+			volume2Bt.setBounds(155, 120, 20, 25);
 			volume2Bt.setBackground(Color.blue);
 			volume2Bt.setBorderPainted(false);
 			volume2Bt.setFocusPainted(false);
 			volume2Bt.setEnabled(false);
 			
 			add(volume3Bt);
-			volume3Bt.setBounds(175, 90, 20, 25);
+			volume3Bt.setBounds(175, 120, 20, 25);
 			volume3Bt.setBackground(Color.white);
 			volume3Bt.setBorderPainted(false);
 			volume3Bt.setFocusPainted(false);
 			volume3Bt.setEnabled(false);
 			
 			add(volume4Bt);
-			volume4Bt.setBounds(195, 90, 20, 25);
+			volume4Bt.setBounds(195, 120, 20, 25);
 			volume4Bt.setBackground(Color.white);
 			volume4Bt.setBorderPainted(false);
 			volume4Bt.setFocusPainted(false);
@@ -213,10 +235,12 @@ public class ManualTest extends JFrame {
 			
 			
 			add(audioVolumeTitle);
-			audioVolumeTitle.setBounds(30, 120, 80, 25);
+			audioVolumeTitle.setBounds(30, 150, 80, 25);
+			audioVolumeTitle.setFont(new Font("Dialog", 1, 15));
 			
 			add(volumeDownBt);
-			volumeDownBt.setBounds(115, 120, 45, 25);
+			volumeDownBt.setBounds(115, 150, 45, 25);
+			volumeDownBt.setFont(new Font("Dialog", 1, 15));
 			volumeDownBt.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e){
@@ -235,7 +259,8 @@ public class ManualTest extends JFrame {
 			});
 			
 			add(volumeUpBt);
-			volumeUpBt.setBounds(170, 120, 45, 25);
+			volumeUpBt.setBounds(170, 150, 45, 25);
+			volumeUpBt.setFont(new Font("Dialog", 1, 15));
 			volumeUpBt.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e){
@@ -254,13 +279,16 @@ public class ManualTest extends JFrame {
 			});
 			
 			add(volumeResult);
-			volumeResult.setBounds(220, 120, 120, 25);
-			
+			volumeResult.setBounds(220, 150, 120, 25);
+			volumeResult.setFont(new Font("Dialog", 1, 15));
 			
 			add(cameraTestTitle);
-			cameraTestTitle.setBounds(30, 150, 80, 25);
+			cameraTestTitle.setBounds(30, 180, 80, 25);
+			cameraTestTitle.setFont(new Font("Dialog", 1, 15));
+			
 			add(cameraTestBt);
-			cameraTestBt.setBounds(115, 150, 100, 25);
+			cameraTestBt.setBounds(115, 180, 100, 25);
+			cameraTestBt.setFont(new Font("Dialog", 1, 15));
 			cameraTestBt.setBackground(Color.green);
 			cameraTestBt.addActionListener(new ActionListener() {
 				@Override
@@ -281,16 +309,20 @@ public class ManualTest extends JFrame {
 			
 			add(cameraArea);
 	        
-	        cameraArea.setBounds(220, 150, 320, 240);
+	        cameraArea.setBounds(220, 180, 320, 240);
 	        add(cameraTestResult);
-	        cameraTestResult.setBounds(115, 180, 100, 25);
+	        cameraTestResult.setBounds(115, 210, 100, 25);
+	        cameraTestResult.setFont(new Font("Dialog", 1, 15));
 			//add(cameraShow);
 			//cameraShow.setBounds(220, 150, 320, 240);
 			
 			add(gyroTestTitle);
-			gyroTestTitle.setBounds(30, 400, 80, 25);
+			gyroTestTitle.setBounds(30, 430, 80, 25);
+			gyroTestTitle.setFont(new Font("Dialog", 1, 15));
+			
 	        add(gyroTestBt);
-	        gyroTestBt.setBounds(115, 400, 100, 25);
+	        gyroTestBt.setBounds(115, 430, 100, 25);
+	        gyroTestBt.setFont(new Font("Dialog", 1, 15));
 	        gyroTestBt.setBackground(Color.green);
 	        gyroTestBt.addActionListener(new ActionListener() {
 				@Override
@@ -310,17 +342,24 @@ public class ManualTest extends JFrame {
 			});
 	        
 	        add(gyroTestResult0);
-	        gyroTestResult0.setBounds(220, 400, 100, 25);
+	        gyroTestResult0.setBounds(220, 430, 100, 25);
+	        gyroTestResult0.setFont(new Font("Dialog", 1, 15));
 	        add(gyroTestResult1);
-	        gyroTestResult1.setBounds(220, 430, 100, 25);
+	        gyroTestResult1.setBounds(220, 460, 100, 25);
+	        gyroTestResult1.setFont(new Font("Dialog", 1, 15));
 	        add(gyroTestResult2);
-	        gyroTestResult2.setBounds(220, 460, 100, 25);
+	        gyroTestResult2.setBounds(220, 490, 100, 25);
+	        gyroTestResult2.setFont(new Font("Dialog", 1, 15));
 	        
 	        
 	        add(acceTestTitle);
-			acceTestTitle.setBounds(30, 500, 80, 25);
+			acceTestTitle.setBounds(30, 530, 80, 25);
+			acceTestTitle.setFont(new Font("Dialog", 1, 15));
+			
 	        add(acceTestBt);
-	        acceTestBt.setBounds(115, 500, 100, 25);
+	        acceTestBt.setBounds(115, 530, 100, 25);
+	        acceTestBt.setFont(new Font("Dialog", 1, 15));
+	        
 	        acceTestBt.setBackground(Color.green);
 	        acceTestBt.addActionListener(new ActionListener() {
 				@Override
@@ -340,16 +379,21 @@ public class ManualTest extends JFrame {
 			});
 	        
 	        add(acceTestResult0);
-	        acceTestResult0.setBounds(220, 500, 100, 25);
+	        acceTestResult0.setBounds(220, 530, 100, 25);
+	        acceTestResult0.setFont(new Font("Dialog", 1, 15));
 	        add(acceTestResult1);
-	        acceTestResult1.setBounds(220, 530, 100, 25);
+	        acceTestResult1.setBounds(220, 560, 100, 25);
+	        acceTestResult1.setFont(new Font("Dialog", 1, 15));
 	        add(acceTestResult2);
-	        acceTestResult2.setBounds(220, 560, 100, 25);
+	        acceTestResult2.setBounds(220, 590, 100, 25);
+	        acceTestResult2.setFont(new Font("Dialog", 1, 15));
 	        
 	        add(uart1TestTitle);
-	        uart1TestTitle.setBounds(30, 590, 80, 25);
+	        uart1TestTitle.setBounds(30, 620, 80, 25);
+	        uart1TestTitle.setFont(new Font("Dialog", 1, 15));
 	        add(uart1TestBt);
-	        uart1TestBt.setBounds(115, 590, 100, 25);
+	        uart1TestBt.setBounds(115, 620, 100, 25);
+	        uart1TestBt.setFont(new Font("Dialog", 1, 15));
 	        uart1TestBt.setBackground(Color.green);
 	        uart1TestBt.addActionListener(new ActionListener() {
 				@Override
@@ -368,12 +412,16 @@ public class ManualTest extends JFrame {
 				}
 			});
 	        add(uart1TestResult);
-	        uart1TestResult.setBounds(220, 590, 100, 25);
+	        uart1TestResult.setBounds(220, 620, 100, 25);
+	        uart1TestResult.setFont(new Font("Dialog", 1, 15));
 	        
 	        add(uart2TestTitle);
-	        uart2TestTitle.setBounds(30, 620, 80, 25);
+	        uart2TestTitle.setBounds(30, 650, 80, 25);
+	        uart2TestTitle.setFont(new Font("Dialog", 1, 15));
+	        
 	        add(uart2TestBt);
-	        uart2TestBt.setBounds(115, 620, 100, 25);
+	        uart2TestBt.setBounds(115, 650, 100, 25);
+	        uart2TestBt.setFont(new Font("Dialog", 1, 15));
 	        uart2TestBt.setBackground(Color.green);
 	        uart2TestBt.addActionListener(new ActionListener() {
 				@Override
@@ -393,10 +441,11 @@ public class ManualTest extends JFrame {
 			});
 	        
 	        add(uart2TestResult);
-	        uart2TestResult.setBounds(220, 620, 100, 25);
+	        uart2TestResult.setBounds(220, 650, 100, 25);
+	        uart2TestResult.setFont(new Font("Dialog", 1, 15));
+	               
 	        
-	        
-			setDefaultCloseOperation(EXIT_ON_CLOSE);
+			//setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setVisible(true);
 			
 			testThread  tTh = new testThread();
@@ -436,6 +485,39 @@ public class ManualTest extends JFrame {
     	testState = Test_Type.NONE;
     	return deviceName;
     }
+	
+	public String getChipId(){
+		String command = "adb shell cat /sys/class/sunxi_info/sys_info";
+        System.out.println(command);
+    	
+    	String result = "失败";
+    	
+    	try {
+    	    Process process = Runtime.getRuntime().exec(command);
+    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	    String line = bufferedReader.readLine();
+    	    while(line != null) {
+    	        System.out.println(line);  
+    	        if (line.contains("sunxi_chipid")){
+    	        	int startIndex = line.indexOf(":");
+    	        	
+    	        	result = line.substring(startIndex + 1, line.length()).trim();
+    	        	//break;
+    	        } 
+    	        line = bufferedReader.readLine();
+    	    }
+    	    System.out.println("adb print end");
+    	    process.destroy();
+    	        	    
+    	    
+    	}catch(Exception e) {
+    	    e.printStackTrace();
+    	}
+    	
+    	return result;
+	}
+	
+	
 	
 	public String audioAdbTest() {
     	String command = "adb shell tinyplayer /media/boot.mp3";
@@ -1317,6 +1399,14 @@ public class ManualTest extends JFrame {
 							volumeGlobal = getAudioVolume();
 							
 							showVolume(volumeGlobal);
+							
+							String id = getChipId();
+							if(id == null || id.isEmpty()){
+								chipidInfo.setText("获取SN失败");
+							} else {
+								chipidInfo.setText(id);
+							}
+							
 							onlyOnce = true;
 						} else {
 							

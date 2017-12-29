@@ -34,7 +34,7 @@ public class TestEntry extends JFrame{
 	File logfile = null;
         
     static FileOutputStream in;
-    JFrame autoWindow;
+    AutoTest autoWindow;
     JFrame manualWindow;
     static String jarPath;
     
@@ -87,9 +87,12 @@ public class TestEntry extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				System.out.println("auto window");
 				autoWindow = new AutoTest();
-				setVisible(false);
+				//setVisible(false);
+				dispose();
 				autoWindow.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e){
+						 System.out.println("auto window close");
+						 autoWindow.close();
 				         setVisible(true);
 					}
 				}); 
@@ -118,6 +121,7 @@ public class TestEntry extends JFrame{
 				manualWindow.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e){
 				         setVisible(true);
+				         
 					}
 				}); 
 			
@@ -130,7 +134,7 @@ public class TestEntry extends JFrame{
 		logInfo.setFont(new Font("Dialog", 1, 20));
 		logInfo.setForeground(Color.blue);
 		add(logpath);
-		logpath.setBounds(430, 500, 400, 50);
+		logpath.setBounds(430, 500, 600, 50);
 		logpath.setFont(new Font("Dialog", 1, 20));
 		logpath.setForeground(Color.blue);
 		
