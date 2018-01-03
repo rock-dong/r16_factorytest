@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class FactoryRecordSqlite
         {
         	
             connection = DriverManager.getConnection(db);
+            
             /*
             if(checkTable()) {
             	System.out.println(table_name + "exist, not need to create new one");
@@ -86,53 +88,19 @@ public class FactoryRecordSqlite
         return Query(sql);
     }
 
-    
-    private boolean checkTable() {
-    	
-    	/*
-    	boolean ret = false;
-    	String sql = "select * from " + table_name + ";";
-    	
-    	try
-        {
-            Statement statement = connection.createStatement();
-            
-            //connection.getMetaData();
-            
-            ResultSet rs = statement.executeQuery(sql);
-            
-            if(rs.next()){
-            	ret = true;
-            	
-            }
-            
-            statement.close();
-            rs.close();
-            
-        } catch (Exception e) {
-        	e.printStackTrace();
-        }
-    	return ret;
-    	*/
-    	try{
-            DatabaseMetaData md = connection.getMetaData();
-            ResultSet rs = md.getTables(null, null, table_name, null);
-            rs.last();
-            return rs.getRow() > 0;
-        }catch(SQLException ex){
-            ex.printStackTrace();
-        }
-        return false;
-        
-    	
-    }
+   
     
     private void createTable() {
     	String sql = "CREATE TABLE IF NOT EXISTS " + table_name + 
     			" (SN TEXT PRIMARY KEY    NOT NULL, " +
-    			"TIME     TEXT     NOT NULL, " +
-    			"RESULT   INT      NOT NULL, " + 
-    			"DETAILS   TEXT)";
+    			"TIME     TIMESTAMP     NOT NULL, " +
+    			"RESULT   INT      NOT NULL, " +
+    			"AUDIO    INT      NOT NULL, " +
+    			"CAMERA   INT      NOT NULL, " +
+    			"GYRO     INT      NOT NULL, " +
+    			"ACCE     INT      NOT NULL, " +
+    			"UART1    INT      NOT NULL, " +
+    			"UART2    INT      NOT NULL)";
     	
     	System.out.println("createTable ...");
     	try
@@ -187,9 +155,15 @@ public class FactoryRecordSqlite
         {
             preState = connection.prepareStatement(sql);
             preState.setString(1, a.GetSn());
-            preState.setString(2, a.GetTime());
+            preState.setTimestamp(2, a.GetTime());
             preState.setInt(3, a.GetResult());
-            preState.setString(4, a.GetDetails());
+            preState.setInt(4, a.GetAudio());
+            preState.setInt(5, a.GetCamera());
+            preState.setInt(6, a.GetGyro());
+            preState.setInt(7, a.GetAcce());
+            preState.setInt(8, a.GetUart1());
+            preState.setInt(9, a.GetUart2());
+            
             result = preState.execute();
             if(result)
             {
@@ -243,15 +217,21 @@ public class FactoryRecordSqlite
     
     public void Update(FactoryRecord a)
     {
-        String sql = "update "+table_name+" set SN=?, TIME=?,RESULT=?,DETAILS=? where SN=?;";
+        String sql = "update "+table_name+" set SN=?, TIME=?,RESULT=?, AUDIO=?, CAMERA=?, GYRO=?, ACCE=?, UART1=?, UART2=? where SN=?;";
         PreparedStatement preState;
         try
         {
             preState = connection.prepareStatement(sql);
             preState.setString(1, a.GetSn());
-            preState.setString(2, a.GetTime());
+            preState.setTimestamp(2, a.GetTime());
             preState.setInt(3, a.GetResult());
-            preState.setString(4, a.GetDetails());
+            preState.setInt(4, a.GetAudio());
+            preState.setInt(5, a.GetCamera());
+            preState.setInt(6, a.GetGyro());
+            preState.setInt(7, a.GetAcce());
+            preState.setInt(8, a.GetUart1());
+            preState.setInt(9, a.GetUart2());
+            
             preState.executeUpdate();
         }
         catch (SQLException e)
@@ -292,7 +272,7 @@ public class FactoryRecordSqlite
             while (rs.next())
             {
                 String sn = rs.getString("SN");
-                String time = rs.getString("TIME");
+                Timestamp time = rs.getTimestamp("TIME");
                 int result = rs.getInt("RESULT");
                 String details = rs.getString("DETAILS");
 
@@ -346,7 +326,7 @@ public class FactoryRecordSqlite
             if (rs.next())
             {
                 String sn = rs.getString("SN");
-                String time = rs.getString("TIME");
+                Timestamp time = rs.getTimestamp("TIME");
                 int result = rs.getInt("RESULT");
                 String details = rs.getString("DETAILS");
                 // String location = rs.getString("location");

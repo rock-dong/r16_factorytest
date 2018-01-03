@@ -32,7 +32,7 @@ public class ManualTest extends JFrame {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final boolean testOnGoing = true;
+	public static boolean testOnGoing = true;
 	JLabel usbTestTitle =  new JLabel("USB ¡¨Ω”");
 	JButton usbTestBt = new JButton("≤‚ ‘");
 	JLabel usbTestResult = new JLabel("");
@@ -93,7 +93,7 @@ public class ManualTest extends JFrame {
 	static Object audioTestLock =  new Object();
 	
 	//MyStack<String> stack = new MyStack<String>(); 
-	private LinkedBlockingQueue<String> queue = new LinkedBlockingQueue<String>();
+	
 	private LinkedBlockingQueue<String> flashqueue = new LinkedBlockingQueue<String>();
 	int usbTestCnt = 0;	
 	int audioTestCnt = 0;
@@ -105,11 +105,16 @@ public class ManualTest extends JFrame {
 	int cameraFlashCnt = 0;
 	
 	private enum Test_Type {
-        NONE,USB_TEST, AUDIO_TEST, CAMERA_TEST, GSENSOR_TEST, UART_EVENT, AUTO_EVENT}
-    
+        NONE,USB_TEST, AUDIO_TEST, VOLUME_UP, VOLUME_DOWN, CAMERA_TEST, GYRO_TEST, ACCE_TEST, UART1_TEST, UART2_TEST}
+	
+	//private static final String[] Test_Cmd = {"stop", "usb test", "audio test", "volume up", "volume down", "camera capture",
+	//		                      "gyro test", "acce test", "uart1 test", "uart2 test"};
+	
+	private LinkedBlockingQueue<Test_Type> queue = new LinkedBlockingQueue<Test_Type>();
+	
     static Test_Type testState = Test_Type.NONE;
     
-    
+    private DeviceControl device;
     
 	public ManualTest() {
 				  		
@@ -147,7 +152,7 @@ public class ManualTest extends JFrame {
 						usbTestResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("usb test");
+						    queue.put(Test_Type.USB_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -185,7 +190,7 @@ public class ManualTest extends JFrame {
 						audioTestResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("audio test");
+						    queue.put(Test_Type.AUDIO_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -249,7 +254,7 @@ public class ManualTest extends JFrame {
 						volumeResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("volume down");
+						    queue.put(Test_Type.VOLUME_DOWN);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -269,7 +274,7 @@ public class ManualTest extends JFrame {
 						volumeResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("volume up");
+						    queue.put(Test_Type.VOLUME_UP);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -298,7 +303,7 @@ public class ManualTest extends JFrame {
 						cameraTestResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("camera capture");
+						    queue.put(Test_Type.CAMERA_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -332,7 +337,7 @@ public class ManualTest extends JFrame {
 						gyroTestResult0.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("gyro test");
+						    queue.put(Test_Type.GYRO_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -342,13 +347,13 @@ public class ManualTest extends JFrame {
 			});
 	        
 	        add(gyroTestResult0);
-	        gyroTestResult0.setBounds(220, 430, 100, 25);
+	        gyroTestResult0.setBounds(220, 430, 200, 25);
 	        gyroTestResult0.setFont(new Font("Dialog", 1, 15));
 	        add(gyroTestResult1);
-	        gyroTestResult1.setBounds(220, 460, 100, 25);
+	        gyroTestResult1.setBounds(220, 460, 200, 25);
 	        gyroTestResult1.setFont(new Font("Dialog", 1, 15));
 	        add(gyroTestResult2);
-	        gyroTestResult2.setBounds(220, 490, 100, 25);
+	        gyroTestResult2.setBounds(220, 490, 200, 25);
 	        gyroTestResult2.setFont(new Font("Dialog", 1, 15));
 	        
 	        
@@ -369,7 +374,7 @@ public class ManualTest extends JFrame {
 						acceTestResult0.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("acce test");
+						    queue.put(Test_Type.ACCE_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -379,13 +384,13 @@ public class ManualTest extends JFrame {
 			});
 	        
 	        add(acceTestResult0);
-	        acceTestResult0.setBounds(220, 530, 100, 25);
+	        acceTestResult0.setBounds(220, 530, 200, 25);
 	        acceTestResult0.setFont(new Font("Dialog", 1, 15));
 	        add(acceTestResult1);
-	        acceTestResult1.setBounds(220, 560, 100, 25);
+	        acceTestResult1.setBounds(220, 560, 200, 25);
 	        acceTestResult1.setFont(new Font("Dialog", 1, 15));
 	        add(acceTestResult2);
-	        acceTestResult2.setBounds(220, 590, 100, 25);
+	        acceTestResult2.setBounds(220, 590, 200, 25);
 	        acceTestResult2.setFont(new Font("Dialog", 1, 15));
 	        
 	        add(uart1TestTitle);
@@ -403,7 +408,7 @@ public class ManualTest extends JFrame {
 						uart1TestResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("uart1 test");
+						    queue.put(Test_Type.UART1_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -428,10 +433,10 @@ public class ManualTest extends JFrame {
 				public void actionPerformed(ActionEvent e){
 					System.out.println("uart2 test");
 					if(testState != Test_Type.NONE) {
-						uart1TestResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
+						uart2TestResult.setText("≤‚ ‘÷–£¨«Î…‘∫Û");
 					}else {
 					    try {
-						    queue.put("uart2 test");
+						    queue.put(Test_Type.UART2_TEST);
 					    } catch (InterruptedException e1) {
 						    // TODO Auto-generated catch block
 						    e1.printStackTrace();
@@ -448,6 +453,8 @@ public class ManualTest extends JFrame {
 			//setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setVisible(true);
 			
+			device = new DeviceControl();
+			
 			testThread  tTh = new testThread();
 			Thread thread1 = new Thread(tTh);
 			thread1.start();
@@ -455,164 +462,9 @@ public class ManualTest extends JFrame {
 			flashThread  tThFlash = new flashThread();
 			Thread thread2 = new Thread(tThFlash);
 			thread2.start();
-			
 	}
 	
-	public String getAdbDevices() {
-    	//String command = "adb shell cameratest 640 480 photo 1 /tmp NV21";
-    	String command = "adb devices";
-    	System.out.println(command);
-    	String deviceName = null;
-    	//ArrayList<String> devices = new ArrayList<String>();
-        testState = Test_Type.USB_TEST;
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	    String line = bufferedReader.readLine();
-    	    while(line != null) {
-    	        System.out.println(line);
-    	        if(line.endsWith("device")){
-    	            deviceName = line.substring(0, line.length() - "device".length()).trim();
-    	            break;
-    	        }
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	testState = Test_Type.NONE;
-    	return deviceName;
-    }
-	
-	public String getChipId(){
-		String command = "adb shell cat /sys/class/sunxi_info/sys_info";
-        System.out.println(command);
-    	
-    	String result = " ß∞‹";
-    	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	    String line = bufferedReader.readLine();
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.contains("sunxi_chipid")){
-    	        	int startIndex = line.indexOf(":");
-    	        	
-    	        	result = line.substring(startIndex + 1, line.length()).trim();
-    	        	//break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-    	return result;
-	}
-	
-	
-	
-	public String audioAdbTest() {
-    	String command = "adb shell tinyplayer /media/boot.mp3";
-    	
-    	testState = Test_Type.AUDIO_TEST;
-    	
-    	System.out.println(command);
-    	
-    	String result = " ß∞‹";
-    	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	    String line = bufferedReader.readLine();
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.endsWith("(quit_flag:0)")){
-    	        	result = "pass";
-    	        	break;
-    	        } else if(line.endsWith("directory")) {
-    	        	result = "“Ù¿÷Œƒº˛Œ¥’“µΩ";
-    	        	break;
-    	        } else if(line.endsWith("found")){
-    	        	result = "“Ù¿÷»Ìº˛Œ¥’“µΩ";
-    	            break;
-    	        }
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-    	testState = Test_Type.NONE;
-    	
-    	return result;
-    }
-	
-	
-	public int getAudioVolume() {
-    	String command = "adb shell amixer get 'speaker volume control'";
-    	int volume = 0;
-    	testState = Test_Type.AUDIO_TEST;
-    	
-    	System.out.println(command);
-    	    	   	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.endsWith("%]")){
-    	        	
-    	        	int startIndex = line.indexOf(":");
-    	        	int endIndex = line.indexOf("[");
-    	            String volumeNum = line.substring(startIndex+1, endIndex).trim();
-    	        	   	        	
-    	        	System.out.println( "current volume is " + volumeNum);
-    	        	
-    	        	volume = Integer.parseInt(volumeNum);
-    	        	
-    	        	if(0 == (volume %12)) {
-    	        		 volume = volume / 12;
-    	        	} else {
-    	        	     volume = volume / 12 + 1;
-    	        	}
-    	        	
-    	        	volume = Math.min(volume, 5);
-    	        	
-    	        	System.out.println( "cover 0-5 volume is " + volume);
-    	        	
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-    	testState = Test_Type.NONE;
-    	
-    	return volume;
-    }
-	
-	
+
 	public void showVolume(int value) {
 		
 		
@@ -670,203 +522,10 @@ public class ManualTest extends JFrame {
 		}
 	}
 	
-	public boolean setAudioVolume(int value) {
-    	String command = "adb shell amixer set 'speaker volume control' ";
-    	
-    	testState = Test_Type.AUDIO_TEST;
-    	
-    	
-    	System.out.println("volume <=== " + value);
-    	
-    	command  = command + Integer.toString(value * 12);
-    	
-    	System.out.println(command);
-    	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.endsWith("%]")){
-    	        	
-    	        	int startIndex = line.indexOf(":");
-    	        	int endIndex = line.indexOf("[");
-    	            String volumeNum = line.substring(startIndex+1, endIndex).trim();
-    	        	   	        	
-    	        	System.out.println( "current volume is " + volumeNum);
-    	        	    	        	  	        	
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-    	testState = Test_Type.NONE;
-    	
-    	return true;
-    }
 	
 	
-	public void removeYuvInDevice() {
-        String command = "adb shell rm /tmp/source_data1.yuv ";
-    	
-    	testState = Test_Type.CAMERA_TEST;
-    	    	
-    	System.out.println(command);
-    	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.endsWith("finish!")){
-    	        	    	        	  	        	
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-    	testState = Test_Type.NONE;
-    	return;
-	}
 	
 	
-	public boolean checkCameraDriver() {
-		boolean ret = false;
-		String command = "adb shell ls /dev/video0 ";
-		testState = Test_Type.CAMERA_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.contains("video0")){
-    	        	System.out.println("find camera driver");
-    	        	TestEntry.writeLog("find camera driver");
-    	        	ret = true;    	        	                    	        	
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
-	
-	
-	public boolean startCameraCapture() {
-    	boolean ret = false;
-		String command = "adb shell cameratest 640 480 photo 1 /tmp NV21 ";
-    	
-    	testState = Test_Type.CAMERA_TEST;
-    	    	
-    	System.out.println(command);
-    	
-    	TestEntry.writeLog("startCameraCapture ....");
-    	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.endsWith("finish!")){
-    	        	ret = true;   
-    	        	TestEntry.writeLog("cameratest cmd ok");
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	    TestEntry.writeLog(e.toString());
-    	}
-    	
-    	try{
-    		Thread.sleep(500);
-    	} catch (InterruptedException e) {
-    		e.printStackTrace();
-    		TestEntry.writeLog(e.toString());
-    	}
-    	
-    	if( !ret ){
-    		testState = Test_Type.NONE;
-    		System.out.println("camera capture fail");
-    		TestEntry.writeLog("cameratest fail");
-    		return ret;
-    	}
-    	
-    	//ret = false;
-    	TestEntry.writeLog("ignore adb result check");
-    	
-    	command = "adb pull /tmp/source_data1.yuv " + TestEntry.jarPath;
-    	System.out.println(command);
-    	
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.endsWith("s)")){  	
-    	        	ret = true;
-    	        	//writeLog("adb pull yuv ok");
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	    TestEntry.writeLog(e.toString());
-    	}
-    	
-    	testState = Test_Type.NONE;
-    	
-    	return ret;
-    }
 	
 	private void deleteCameraFiles() {
 		System.out.println("deleteCameraFiles ...");
@@ -942,12 +601,7 @@ public class ManualTest extends JFrame {
         
         System.out.println("showBmp ...");
     }
-	
-	
-	
-	
-	
-	
+		
 	private class MyPanel extends JPanel{
 
 	    /**
@@ -1005,79 +659,11 @@ public class ManualTest extends JFrame {
 
     }
 	
-	
-	public boolean checkGyro() {
-		boolean ret = false;
-		String command = "adb shell cat /sys/class/input/input4/name";
-		testState = Test_Type.GSENSOR_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.contains("bmg160")){
-    	        	System.out.println("find gyro driver");
-    	        	ret = true;    	        	                    	        	
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
-	
-	public boolean controlGyro(boolean onoff) {
-		boolean ret = false;
-		String command;
-		if(onoff)
-		    command = "adb shell \"echo 1 > /sys/class/input/input4/enable\"";
-		else
-			command = "adb shell \"echo 0 > /sys/class/input/input4/enable\"";
-		
-		testState = Test_Type.GSENSOR_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
-	
 	public boolean showGyrodata() {
 		boolean ret = false;
 		String command = "adb shell getevent";
 		int num = 0;
-		testState = Test_Type.GSENSOR_TEST;
+		//testState = Test_Type.GSENSOR_TEST;
     	
     	System.out.println(command);
     	try {
@@ -1117,50 +703,18 @@ public class ManualTest extends JFrame {
     	}catch(Exception e) {
     	    e.printStackTrace();
     	}
-        testState = Test_Type.NONE;
+        //testState = Test_Type.NONE;
     	
     	return ret;
 	}
 	
-	public boolean controlAcce(boolean onoff) {
-		boolean ret = false;
-		String command;
-		if(onoff)
-		    command = "adb shell \"echo 1 > /sys/class/input/input2/enable\"";
-		else
-			command = "adb shell \"echo 0 > /sys/class/input/input2/enable\"";
-		
-		testState = Test_Type.GSENSOR_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
+	
 	
 	public boolean showAccedata() {
 		boolean ret = false;
 		String command = "adb shell getevent";
 		int num = 0;
-		testState = Test_Type.GSENSOR_TEST;
+		//testState = Test_Type.GSENSOR_TEST;
     	
     	System.out.println(command);
     	try {
@@ -1200,122 +754,12 @@ public class ManualTest extends JFrame {
     	}catch(Exception e) {
     	    e.printStackTrace();
     	}
-        testState = Test_Type.NONE;
+        //testState = Test_Type.NONE;
     	
     	return ret;
 	}
 	
-	
-	public boolean checkAcce() {
-		boolean ret = false;
-		String command = "adb shell cat /sys/class/input/input2/name";
-		testState = Test_Type.GSENSOR_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.contains("bma2x2")){
-    	        	System.out.println("find acce driver");
-    	        	ret = true;    	        	                    	        	
-    	        	break;
-    	        } 
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
-	
-	
-	public boolean uart1test() {
-		boolean ret = false;
-		String command = "adb shell mincomtest";
-		testState = Test_Type.GSENSOR_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.contains("uart 1 test success")){
-    	        	System.out.println("uart 1 test pass");
-    	        	ret = true;    	        	                    	        	
-    	        	break;
-    	        } else if (line.contains("uart 1 test fail")) {
-    	        	System.out.println("uart 1 test fail");
-    	        	ret = false;    	        	                    	        	
-    	        	break;
-    	        }
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
-	
-	public boolean uart2test() {
-		boolean ret = false;
-		String command = "adb shell mincomtest";
-		testState = Test_Type.GSENSOR_TEST;
-    	
-    	System.out.println(command);
-    	try {
-    	    Process process = Runtime.getRuntime().exec(command);
-    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	   
-    	    String line = bufferedReader.readLine();
-    	   
-    	    while(line != null) {
-    	        System.out.println(line);  
-    	        if (line.contains("uart 2 test success")){
-    	        	System.out.println("uart 1 test pass");
-    	        	ret = true;    	        	                    	        	
-    	        	break;
-    	        } else if (line.contains("uart 2 test fail")) {
-    	        	System.out.println("uart 2 test fail");
-    	        	ret = false;    	        	                    	        	
-    	        	break;
-    	        }
-    	        line = bufferedReader.readLine();
-    	    }
-    	    System.out.println("adb print end");
-    	    process.destroy();
-    	        	    
-    	    
-    	}catch(Exception e) {
-    	    e.printStackTrace();
-    	}
-    	
-        testState = Test_Type.NONE;
-    	
-    	return ret;
-	}
-	
+		
 	/*
 	public static class TestTimeTask extends TimerTask{  
 	      
@@ -1383,24 +827,24 @@ public class ManualTest extends JFrame {
 			System.out.println("testThread start ...");
 			while(testOnGoing){
 			try {
-				String cmd  = queue.take();
+				Test_Type cmd  = queue.take();
 				
 				System.out.println("testThead receive :" + cmd);
 				
 				switch(cmd) {
-				    case "usb test" :{
+				    case USB_TEST :{
 
 						usbTestBt.setEnabled(false);
 						usbTestResult.setText("ø™ º≤‚ ‘....");
 						usbTestBt.setBackground(Color.blue);
 						
-						String deviceList = getAdbDevices();
+						String deviceList = device.getAdbDevices();
 						if(!onlyOnce) {
-							volumeGlobal = getAudioVolume();
+							volumeGlobal = device.getAudioVolume();
 							
 							showVolume(volumeGlobal);
 							
-							String id = getChipId();
+							String id = device.getChipId();
 							if(id == null || id.isEmpty()){
 								chipidInfo.setText("ªÒ»°SN ß∞‹");
 							} else {
@@ -1425,14 +869,14 @@ public class ManualTest extends JFrame {
 					    break;
 				    }
 				    
-				    case "audio test" :{
+				    case AUDIO_TEST :{
 
 						audioTestBt.setEnabled(false);
 						//audioTestResult.setText("ø™ º≤‚ ‘...");
 						audioTestBt.setBackground(Color.blue);
 						flashqueue.put("audio flash");
 						audioFlashCnt = 0;
-						String deviceList = getAdbDevices();
+						String deviceList = device.getAdbDevices();
 						audioTestCnt++;
 						
 						if(deviceList == null || deviceList.isEmpty() ){
@@ -1440,7 +884,7 @@ public class ManualTest extends JFrame {
 						} else {
 							//TestTimeTask.getInstance().setDuration(5000);
 							//TestTimeTask.getInstance().start(true);
-							String result = audioAdbTest();
+							String result = device.audioAdbTest();
 							if(result.equalsIgnoreCase("pass") ) {
 								audioTestResult.setText(audioTestCnt + " ≥…π¶ ");
 							} else {
@@ -1457,9 +901,9 @@ public class ManualTest extends JFrame {
 					    break;
 				    }
 				    
-				    case "volume up" : {
+				    case VOLUME_UP : {
                         volumeResult.setText("");
-						int value = getAudioVolume();
+						int value = device.getAudioVolume();
 						System.out.println("volume up ===> " + value);
 						if(value == 5) {
 							showVolume(0);
@@ -1488,15 +932,15 @@ public class ManualTest extends JFrame {
 							}
 						} else {
 							showVolume(value +1);
-							setAudioVolume(value +1);
+							device.setAudioVolume(value +1);
 						}
 						
 					    break;
 				    }
 				    
-				    case "volume down" : {
+				    case VOLUME_DOWN : {
                         volumeResult.setText("");
-						int value = getAudioVolume();
+						int value = device.getAudioVolume();
 						System.out.println("volume down ===> " + value);
 						if(value == 0) {
 							showVolume(1);
@@ -1525,14 +969,14 @@ public class ManualTest extends JFrame {
 							}
 						} else {
 							showVolume(value - 1);
-							setAudioVolume(value - 1);
+							device.setAudioVolume(value - 1);
 						}
 						
 					
 				    	break;
 				    }
 				    
-				    case "camera capture" : {
+				    case CAMERA_TEST : {
                         //cameraTestResult.setText("");
 				    	TestEntry.writeLog("run camera capture");
 				    	boolean cameraret = false;
@@ -1542,15 +986,15 @@ public class ManualTest extends JFrame {
 						cameraTestBt.setBackground(Color.blue);
 						deleteCameraFiles();
 						showBmp();
-						String deviceList = getAdbDevices();
+						String deviceList = device.getAdbDevices();
 						if(deviceList == null || deviceList.isEmpty() ){
 						    cameraTestResult.setText(audioTestCnt + "  ß∞‹£¨USBŒ¥¡¨Ω”");
 						    TestEntry.writeLog("usb connect fail");
 						} else {
-							if(checkCameraDriver()) {
+							if(device.checkCameraDriver()) {
 								TestEntry.writeLog("find video0 driver");
-						        removeYuvInDevice();
-						        if(startCameraCapture()){
+						        device.removeYuvInDevice();
+						        if(device.startCameraCapture()){
 						        	TestEntry.writeLog("capture ok");
                                     if(convertYuvToBmp()){
                                 	    showBmp();
@@ -1582,14 +1026,14 @@ public class ManualTest extends JFrame {
 					    break;
 				    }
 					
-				    case "gyro test" : {
+				    case GYRO_TEST : {
 				    	gyroTestBt.setEnabled(false);
 				    	gyroTestBt.setBackground(Color.blue);
 				    	
-				    	if(checkGyro()){
-				    	    controlGyro(true);
+				    	if(device.checkGyro()){
+				    	    device.controlGyro(true);
 				    	    showGyrodata();
-				    	    controlGyro(false);
+				    	    device.controlGyro(false);
 				    	    
 				    	}else {
 				    		gyroTestResult0.setText("«˝∂ØŒ¥’“µΩ");
@@ -1601,14 +1045,14 @@ public class ManualTest extends JFrame {
 				    	break;
 				    }
 				    
-				    case "acce test" : {
+				    case ACCE_TEST : {
 				    	acceTestBt.setEnabled(false);
 				    	acceTestBt.setBackground(Color.blue);
 				    	
-				    	if(checkAcce()){
-				    	    controlAcce(true);
+				    	if(device.checkAcce()){
+				    	    device.controlAcce(true);
 				    	    showAccedata();
-				    	    controlAcce(false);
+				    	    device.controlAcce(false);
 				    	}else {
 				    		acceTestResult0.setText("«˝∂ØŒ¥’“µΩ");
 				    	}
@@ -1619,12 +1063,12 @@ public class ManualTest extends JFrame {
 				    	break;
 				    }
 				    
-				    case "uart1 test" : {
+				    case UART1_TEST : {
 				    	uart1TestBt.setEnabled(false);
 				    	uart1TestBt.setBackground(Color.blue);
 				    	uart1TestCnt++;
 				    	
-				    	if(uart1test()){
+				    	if(device.uart1test()){
 				    		uart1TestResult.setText(uart1TestCnt + " ≥…π¶ ");
 				    	} else {
 				    		uart1TestResult.setText(uart1TestCnt + "  ß∞‹");
@@ -1636,12 +1080,12 @@ public class ManualTest extends JFrame {
 				    	break;
 				    }
 				    
-				    case "uart2 test" : {
+				    case UART2_TEST: {
 				    	uart2TestBt.setEnabled(false);
 				    	uart2TestBt.setBackground(Color.blue);
 				    	uart2TestCnt++;
 				    	
-				    	if(uart2test()){
+				    	if(device.uart2test()){
 				    		uart2TestResult.setText(uart2TestCnt + " ≥…π¶ ");
 				    	} else {
 				    		uart2TestResult.setText(uart2TestCnt + "  ß∞‹");
@@ -1650,6 +1094,10 @@ public class ManualTest extends JFrame {
 				    	uart2TestBt.setEnabled(true);
 				    	uart2TestBt.setBackground(Color.green);
 				    	
+				    	break;
+				    }
+				    
+				    case NONE : {
 				    	break;
 				    }
 				}

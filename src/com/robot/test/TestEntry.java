@@ -120,6 +120,7 @@ public class TestEntry extends JFrame{
 				setVisible(false);
 				manualWindow.addWindowListener(new WindowAdapter() {
 					public void windowClosing(WindowEvent e){
+						 ManualTest.testOnGoing = false;
 				         setVisible(true);
 				         
 					}
@@ -128,6 +129,9 @@ public class TestEntry extends JFrame{
 				
 			  }
 		});
+		
+		
+		
 		
 		add(logInfo);
 		logInfo.setBounds(300, 500, 130, 50);

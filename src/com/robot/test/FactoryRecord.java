@@ -1,5 +1,6 @@
 package com.robot.test;
 
+import java.sql.Timestamp;
 
 public class FactoryRecord
 {
@@ -8,16 +9,22 @@ public class FactoryRecord
      * Thing Property
      */
     public String sn;
-    public String time;
+   
+    public Timestamp time;
     public int  result;
-    public String details;
+    public int  audio;
+    public int  camera;
+    public int gyro;
+    public int acce;
+    public int uart1;
+    public int uart2;
     
    
     public final String GetSn(){return sn;}
 
     // public boolean active = false;
 
-    public final String GetTime()
+    public final Timestamp GetTime()
     {
         return time;
     }
@@ -27,18 +34,42 @@ public class FactoryRecord
         return result;
     }
 
-    public final String GetDetails()
+    public final int GetAudio()
     {
-        return details;
+        return audio;
+    }
+    
+    public final int GetCamera()
+    {
+        return camera;
+    }
+    
+    public final int GetGyro()
+    {
+        return gyro;
     }
 
+    public final int GetAcce()
+    {
+        return acce;
+    }
+    
+    public final int GetUart1()
+    {
+        return uart1;
+    }
+    
+    public final int GetUart2()
+    {
+        return uart2;
+    }
     
     public void SetSn(String str)
     {
         sn = str;
     }
 
-    public void SetTime(String str)
+    public void SetTime(Timestamp str)
     {
         time = str;
     }
@@ -48,10 +79,36 @@ public class FactoryRecord
         result = rst;
     }
 
-    public void SetDetails(String dtl)
+    public void SetAudio(int value)
     {
-        details = dtl;
-     
+        audio = value;
     }
+    
+    public void SetCamera(int value)
+    {
+        camera = value;
+    }
+    
+    public void SetGyro(int value)
+    {
+        gyro = value;
+    }
+
+    public void SetAcce(int value)
+    {
+        acce = value;
+    }
+    
+    public void SetUart1(int value)
+    {
+        uart1 = value;
+    }
+    
+    public void SetUart2(int value)
+    {
+        uart2 = value;
+    }
+    
+    
 
 }
