@@ -3,6 +3,7 @@ package com.robot.test;
 
 
 import java.awt.Checkbox;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -13,19 +14,27 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 
 public class AutoTest extends JFrame {
@@ -80,11 +89,17 @@ public class AutoTest extends JFrame {
 	JLabel autoTestNote2 = new JLabel("2 ： 设备开机，看到指示灯闪烁后再开始测试");
 	
 	JLabel passTitle = new JLabel("成功");
+	JLabel passNumberTitle = new JLabel(); 
 	JLabel failTitle = new JLabel("失败");
+	JLabel failNumberTitle = new JLabel();
 	
 	JButton autoTestBt = new JButton("开始");
 	JLabel autoTestInfo = new JLabel("");
-	JLabel chipidInfo = new JLabel(""); 
+	JLabel chipidInfo = new JLabel("");
+	String chipid;
+	String barcode;
+	boolean mUsbCheckFail = true;
+	JLabel barcodeInfo = new JLabel("");
 	
 	JButton audioIndication0 = new JButton("");
 	JButton audioIndication1 = new JButton("");
@@ -97,10 +112,30 @@ public class AutoTest extends JFrame {
 	JButton audioIndication8 = new JButton("");
 	JButton audioIndication9 = new JButton("");
 	
+	
+	
+	private static final String audioResult0Name = "有";
+	JLabel cbAudioTitle = new JLabel("");
+
+	JCheckBox cbjAudio0 = new JCheckBox(audioResult0Name, false);
+	private static final String audioResult1Name = "没有";
+    
+    JCheckBox cbjAudio1 = new JCheckBox(audioResult1Name, false);
+    
 	JButton cameraIndication0 = new JButton("");
 	JButton cameraIndication1 = new JButton("");
 	JButton cameraIndication2 = new JButton("");
 	
+	
+	
+	private static final String cameraResult0Name = "有";
+	JLabel cbCameraTitle = new JLabel("");
+	
+	JCheckBox cbjCamera0 = new JCheckBox(cameraResult0Name,false);
+	
+	private static final String cameraResult1Name = "没有";
+    JCheckBox cbjCamera1 = new JCheckBox(cameraResult1Name,false);
+    
 	JButton gyroIndication0 = new JButton("");
 	JButton gyroIndication1 = new JButton("");
 	JButton gyroIndication2 = new JButton("");
@@ -133,12 +168,22 @@ public class AutoTest extends JFrame {
 	
 	int audioFlashCnt = 0;
 	int cameraFlashCnt = 0;
+	int gyroFlashCnt = 0;
+	int acceFlashCnt = 0;
+	int uart1FlashCnt = 0;
+	int uart2FlashCnt = 0;
+	
 	public static boolean testOnGoing = true;
 	
 	private DeviceControl device = new DeviceControl();
 	
 	MyPanel cameraArea = new MyPanel();
 	
+	List<FactoryRecord> savedRecord;
+	List<FactoryRecord> passRecord;
+	List<FactoryRecord> failRecord;
+	int passNum = 0;
+	int failNum = 0;
     public AutoTest() {
     	setSize(700, 700);
 		setLocation(300, 300);
@@ -149,13 +194,19 @@ public class AutoTest extends JFrame {
 		System.out.println("autotest enter ..");
 		
 		
-		database = new FactoryRecordSqlite();
+		loadRecordThread  tThSql = new loadRecordThread();
+		Thread thread3 = new Thread(tThSql);
+		thread3.start();
 		
-		database.OpenRecord(dbName);
+		
+		
+		
 		
 		
 		testItem.add(Test_Type.USB_TEST);
 		CbItemListener cbi = new CbItemListener();
+		CbAudioItemListener cbiAudio = new CbAudioItemListener();
+		CbCameraItemListener cbiCamera = new CbCameraItemListener();
 		
 		add(autoTestTitle);
 		autoTestTitle.setBounds(400, 0, 300, 30);
@@ -216,11 +267,22 @@ public class AutoTest extends JFrame {
 	    passTitle.setFont(new Font("Dialog", 1, 30));
         passTitle.setForeground(Color.green);		
 		
+        add(passNumberTitle);
+        passNumberTitle.setBounds(910, 200, 300, 30);
+        passNumberTitle.setFont(new Font("Dialog", 1, 30));
+        passNumberTitle.setForeground(Color.green);
+        
         add(failTitle);
 	    failTitle.setBounds(1110, 150, 100, 30);
 	    failTitle.setFont(new Font("Dialog", 1, 30));
         failTitle.setForeground(Color.red);
 		
+        add(failNumberTitle);
+        failNumberTitle.setBounds(1110, 200, 300, 30);
+        failNumberTitle.setFont(new Font("Dialog", 1, 30));
+        failNumberTitle.setForeground(Color.red);
+        
+        
         add(autoTestBt);
         autoTestBt.setBounds(410, 200, 100, 50);
         autoTestBt.setForeground(Color.blue);
@@ -230,6 +292,7 @@ public class AutoTest extends JFrame {
 			public void actionPerformed(ActionEvent e){
 				System.out.println("auto test start");
 				
+				popBarcodeIndication();
 				loadSelectedItem();
 				
 				
@@ -243,11 +306,15 @@ public class AutoTest extends JFrame {
         autoTestInfo.setForeground(Color.blue);
         autoTestInfo.setFont(new Font("Dialog", 1, 20));
         
-        add(chipidInfo);
-        chipidInfo.setBounds(300, 250, 500, 40);
-        chipidInfo.setFont(new Font("Dialog", 1, 20));
-        chipidInfo.setForeground(Color.red);
+        //add(chipidInfo);
+        //chipidInfo.setBounds(300, 250, 500, 40);
+        //chipidInfo.setFont(new Font("Dialog", 1, 20));
+        //chipidInfo.setForeground(Color.red);
         
+        add(barcodeInfo);
+        barcodeInfo.setBounds(300, 250, 500, 40);
+        barcodeInfo.setFont(new Font("Dialog", 1, 20));
+        barcodeInfo.setForeground(Color.blue);
         
         add(audioIndication0);
         audioIndication0.setBounds(100, 300, 10, 30);
@@ -320,6 +387,37 @@ public class AutoTest extends JFrame {
         audioIndication9.setEnabled(false);
         audioIndication9.setVisible(false);
         
+        add(cbAudioTitle);
+        cbAudioTitle.setBounds(100, 380, 50, 30);
+        cbAudioTitle.setFont(new Font("Dialog", 1, 20));
+        cbAudioTitle.setForeground(Color.blue);
+        /*
+        add(cbAudio0);
+        cbAudio0.setBounds(100, 420, 100, 30);
+        cbAudio0.setFont(new Font("Dialog", 1, 20));
+        cbAudio0.setVisible(false);
+        cbAudio0.addItemListener(cbiAudio);
+        add(cbAudio1);
+        cbAudio1.setBounds(100, 450, 100, 30);
+        cbAudio1.setFont(new Font("Dialog", 1, 20));
+        cbAudio1.setVisible(false);
+        cbAudio1.addItemListener(cbiAudio);
+        */
+        
+        add(cbjAudio0);
+        cbjAudio0.setBounds(100, 420, 100, 30);
+        cbjAudio0.setFont(new Font("Dialog", 1, 20));
+        cbjAudio0.setVisible(false);
+        cbjAudio0.addItemListener(cbiAudio);
+        add(cbjAudio1);
+        cbjAudio1.setBounds(100, 450, 100, 30);
+        cbjAudio1.setFont(new Font("Dialog", 1, 20));
+        cbjAudio1.setVisible(false);
+        cbjAudio1.addItemListener(cbiAudio);
+        
+
+
+        
         add(cameraIndication0);
         cameraIndication0.setBounds(200, 300, 33, 30);
         cameraIndication0.setBackground(Color.blue);
@@ -341,10 +439,34 @@ public class AutoTest extends JFrame {
         cameraIndication2.setFocusPainted(false);
         cameraIndication2.setEnabled(false);
         cameraIndication2.setVisible(false);
+        
+        add(cbCameraTitle);
+        cbCameraTitle.setBounds(200, 380, 50, 30);
+        cbCameraTitle.setForeground(Color.blue);
+        cbCameraTitle.setFont(new Font("Dialog", 1, 20));
+        
+        add(cbjCamera0);
+        cbjCamera0.setBounds(200, 420, 100, 30);
+        cbjCamera0.setFont(new Font("Dialog", 1, 20));
+        cbjCamera0.setVisible(false);
+        cbjCamera0.addItemListener(cbiCamera);
+        
+        add(cbjCamera1);
+        cbjCamera1.setBounds(200, 450, 100, 30);
+        cbjCamera1.setFont(new Font("Dialog", 1, 20));
+        cbjCamera1.setVisible(false);
+        cbjCamera1.addItemListener(cbiCamera);
+        
         add(cameraArea);
                 
         cameraArea.setBounds(200, 500, 320, 240);
                
+        
+        add(chipidInfo);
+        chipidInfo.setBounds(300, 750, 500, 40);
+        chipidInfo.setFont(new Font("Dialog", 1, 20));
+        chipidInfo.setForeground(Color.red);
+        
         deleteCameraFiles();
         
         
@@ -385,15 +507,15 @@ public class AutoTest extends JFrame {
         gyroIndication4.setVisible(false);
         
         add(gyroTestResult0);
-        gyroTestResult0.setBounds(300, 430, 200, 25);
-        gyroTestResult0.setFont(new Font("Dialog", 1, 10));
+        gyroTestResult0.setBounds(300, 340, 200, 25);
+        gyroTestResult0.setFont(new Font("Dialog", 1, 12));
         
         add(gyroTestResult1);
-        gyroTestResult1.setBounds(300, 460, 200, 25);
-        gyroTestResult1.setFont(new Font("Dialog", 1, 10));
+        gyroTestResult1.setBounds(300, 365, 200, 25);
+        gyroTestResult1.setFont(new Font("Dialog", 1, 12));
         add(gyroTestResult2);
-        gyroTestResult2.setBounds(300, 490, 200, 25);
-        gyroTestResult2.setFont(new Font("Dialog", 1, 10));
+        gyroTestResult2.setBounds(300, 390, 200, 25);
+        gyroTestResult2.setFont(new Font("Dialog", 1, 12));
         
         
         add(acceIndication0);
@@ -434,13 +556,13 @@ public class AutoTest extends JFrame {
         
         add(acceTestResult0);
         acceTestResult0.setBounds(400, 340, 100, 25);
-        acceTestResult0.setFont(new Font("Dialog", 1, 10));
+        acceTestResult0.setFont(new Font("Dialog", 1, 12));
         add(acceTestResult1);
-        acceTestResult1.setBounds(400, 365, 200, 25);
-        acceTestResult1.setFont(new Font("Dialog", 1, 10));
+        acceTestResult1.setBounds(400, 365, 100, 25);
+        acceTestResult1.setFont(new Font("Dialog", 1, 12));
         add(acceTestResult2);
-        acceTestResult2.setBounds(400, 390, 200, 25);
-        acceTestResult2.setFont(new Font("Dialog", 1, 10));
+        acceTestResult2.setBounds(400, 390, 100, 25);
+        acceTestResult2.setFont(new Font("Dialog", 1, 12));
         
         add(uart1Indication0);
         uart1Indication0.setBounds(500, 300, 50, 30);
@@ -450,7 +572,7 @@ public class AutoTest extends JFrame {
         uart1Indication0.setEnabled(false);
         uart1Indication0.setVisible(false);
         add(uart1Indication1);
-        uart1Indication1.setBounds(550, 300, 40, 30);
+        uart1Indication1.setBounds(550, 300, 50, 30);
         uart1Indication1.setBackground(Color.blue);
         uart1Indication1.setBorderPainted(false);
         uart1Indication1.setFocusPainted(false);
@@ -496,6 +618,53 @@ public class AutoTest extends JFrame {
 		Thread thread2 = new Thread(tThFlash);
 		thread2.start();
 		
+		
+		
+    }
+    
+    
+    class CbAudioItemListener implements ItemListener  
+    {  
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			// TODO Auto-generated method stub
+			if(e.getSource().equals(cbjAudio0) && cbjAudio0.isSelected()){
+				
+				testResult.put(Test_Type.AUDIO_TEST, 1);
+				cbjAudio1.setSelected(false);
+				System.out.println("audio manual check pass");
+			} 
+			
+			if (e.getSource().equals(cbjAudio1) &&  cbjAudio1.isSelected()){
+				
+				cbjAudio0.setSelected(false);
+				testResult.put(Test_Type.AUDIO_TEST, 0);
+				System.out.println("audio manual check fail");
+			}
+			
+		}
+    }
+    
+    class CbCameraItemListener implements ItemListener  
+    {  
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			// TODO Auto-generated method stub
+             if(e.getSource().equals(cbjCamera0) && cbjCamera0.isSelected()){
+				
+				testResult.put(Test_Type.CAMERA_TEST, 1);
+				cbjCamera1.setSelected(false);
+				System.out.println("camera manual check pass");
+			}
+			
+			if (e.getSource().equals(cbjCamera1) &&  cbjCamera1.isSelected()){
+				
+				cbjCamera0.setSelected(false);
+				testResult.put(Test_Type.CAMERA_TEST, 0);
+				System.out.println("camera manual check fail");
+			}
+			
+		}
     }
     
     class CbItemListener implements ItemListener  
@@ -506,6 +675,7 @@ public class AutoTest extends JFrame {
 			Checkbox cb=(Checkbox)e.getItemSelectable();
 			String cbLabel = cb.getLabel();
 		    boolean cbState = cb.getState();
+		   
 			switch(cbLabel) {
 			case audioCBName : {
 				if (cbState == true) {
@@ -620,7 +790,12 @@ public class AutoTest extends JFrame {
 						System.out.println("no uart2 test, why delete?");
 					}
 				}
+				break;
 			}
+			
+			
+			
+			
 			
 			}
 			
@@ -628,10 +803,18 @@ public class AutoTest extends JFrame {
     }
     
     
+    private void popBarcodeIndication() {
+    	String str = JOptionPane.showInputDialog("请输入条形码数字");
+    	System.out.println(str);
+    	barcodeInfo.setText("条形码       :  " + str);
+    	barcode = str;
+    }
+    
+    
     private void loadSelectedItem() {
     	
     	testResult.clear();
-    	
+    	mUsbCheckFail = true;
     	try {
 		    queue.put(Test_Type.USB_TEST);
 		    
@@ -725,7 +908,17 @@ public class AutoTest extends JFrame {
  		audioIndication6.setBackground(Color.blue);
  		audioIndication7.setBackground(Color.blue);
 		audioIndication8.setBackground(Color.blue);
-		audioIndication9.setBackground(Color.blue); 	
+		audioIndication9.setBackground(Color.blue); 
+		
+		
+        
+		cbjAudio0.setVisible(true);
+		cbjAudio1.setVisible(true);
+		cbjAudio0.setSelected(false);
+		cbjAudio1.setSelected(false);
+		//cbAudio1.setState(false);
+		
+		cbAudioTitle.setText("声音");
 		
     }
     
@@ -736,8 +929,13 @@ public class AutoTest extends JFrame {
     	cameraIndication0.setBackground(Color.blue);
     	cameraIndication1.setBackground(Color.blue);
     	cameraIndication2.setBackground(Color.blue); 
+    	cbjCamera0.setVisible(true);
+		cbjCamera1.setVisible(true);
+		cbjCamera0.setSelected(false);
+		cbjCamera1.setSelected(false);
     	deleteCameraFiles();
 		showBmp();
+		cbCameraTitle.setText("图像");
     }
     
     void audioClear() {
@@ -750,7 +948,10 @@ public class AutoTest extends JFrame {
  		audioIndication6.setVisible(false);
  		audioIndication7.setVisible(false);
 		audioIndication8.setVisible(false);
-		audioIndication9.setVisible(false); 		
+		audioIndication9.setVisible(false);
+		cbjAudio0.setVisible(false);
+		cbjAudio1.setVisible(false);
+		cbAudioTitle.setText("");
    }
     
     private void displayGyroTest() {
@@ -759,11 +960,10 @@ public class AutoTest extends JFrame {
     	gyroIndication2.setVisible(true);
     	gyroIndication3.setVisible(true);
     	gyroIndication4.setVisible(true);
-    	
-    	gyroTestResult0.setVisible(true);
-    	gyroTestResult1.setVisible(true);
-    	gyroTestResult2.setVisible(true);
-    	
+    	gyroTestResult0.setText("");
+    	gyroTestResult1.setText("");
+    	gyroTestResult2.setText("");
+    	    	
     	gyroIndication0.setBackground(Color.blue);
     	gyroIndication1.setBackground(Color.blue);
     	gyroIndication2.setBackground(Color.blue); 
@@ -798,9 +998,9 @@ public class AutoTest extends JFrame {
     	gyroIndication2.setVisible(false);
     	gyroIndication3.setVisible(false);
     	gyroIndication4.setVisible(false);
-    	gyroTestResult0.setVisible(false);
-    	gyroTestResult1.setVisible(false);
-    	gyroTestResult2.setVisible(false);
+    	gyroTestResult0.setText("");
+    	gyroTestResult1.setText("");
+    	gyroTestResult2.setText("");
 				 		
    }
     
@@ -822,9 +1022,9 @@ public class AutoTest extends JFrame {
     	acceIndication2.setVisible(true);
     	acceIndication3.setVisible(true);
     	acceIndication4.setVisible(true);
-    	acceTestResult0.setVisible(true);
-    	acceTestResult1.setVisible(true);
-    	acceTestResult2.setVisible(true);
+    	acceTestResult0.setText("");
+    	acceTestResult1.setText("");
+    	acceTestResult2.setText("");
     	
     	acceIndication0.setBackground(Color.blue);
     	acceIndication1.setBackground(Color.blue);
@@ -841,9 +1041,9 @@ public class AutoTest extends JFrame {
     	acceIndication2.setVisible(false);
     	acceIndication3.setVisible(false);
     	acceIndication4.setVisible(false);
-    	acceTestResult0.setVisible(false);
-    	acceTestResult1.setVisible(false);
-    	acceTestResult2.setVisible(false);
+    	acceTestResult0.setText("");
+    	acceTestResult1.setText("");
+    	acceTestResult2.setText("");
 				 		
    }
     
@@ -942,6 +1142,8 @@ public class AutoTest extends JFrame {
 						autoTestInfo.setText("正在检测环境....");
 						autoTestBt.setBackground(Color.gray);
 						
+						
+						
 						String deviceList = device.getAdbDevices();
 						if(deviceList == null || deviceList.isEmpty() ){
 						    chipidInfo.setText(" 失败，未找到设备");
@@ -953,13 +1155,18 @@ public class AutoTest extends JFrame {
 					    device.setAudioVolume(5);
 													
 						String id = device.getChipId();
+						
 						if(id == null || id.isEmpty()){
 						    chipidInfo.setText("获取SN失败");
+						    autoTestInfo.setText("环境检测失败，结束");
+						    break;
 						} else {
 							chipidInfo.setText("SN   :  " + id);
+							chipid = id;
 						}
 								
 						autoTestInfo.setText("环境通过");
+						mUsbCheckFail = false;
 						
 					    break;
 				    }
@@ -967,6 +1174,12 @@ public class AutoTest extends JFrame {
 				    case AUDIO_TEST :{
 
 				    	boolean audioret = false;
+				    	if(mUsbCheckFail) {
+				    		System.out.println("skip, usb is faill");
+				    		testResult.put(Test_Type.AUDIO_TEST, 0);
+				    		break;
+				    	}
+				    	
 						flashqueue.put(Flash_Type.AUDIO);
 						audioFlashCnt = 0;
 						String deviceList = device.getAdbDevices();
@@ -989,7 +1202,7 @@ public class AutoTest extends JFrame {
 						}
 						if (audioret) {
 						    flashqueue.put(Flash_Type.AUDIO_END_OK);
-						    testResult.put(Test_Type.AUDIO_TEST, 1);
+						    
 						} else {
 							flashqueue.put(Flash_Type.AUDIO_END_FAIL);
 							testResult.put(Test_Type.AUDIO_TEST, 0);
@@ -1004,6 +1217,12 @@ public class AutoTest extends JFrame {
                         //cameraTestResult.setText("");
 				    	
 				    	boolean cameraret = false;
+				    	if(mUsbCheckFail) {
+				    		System.out.println("skip, usb is faill");
+				    		testResult.put(Test_Type.CAMERA_TEST, 0);
+				    		break;
+				    	}
+				    	cameraFlashCnt = 0;
                         flashqueue.put(Flash_Type.CAMERA);
                         					
 						
@@ -1032,7 +1251,7 @@ public class AutoTest extends JFrame {
 						
 						if(cameraret) {
 						    flashqueue.put(Flash_Type.CAMERA_END_OK);
-						    testResult.put(Test_Type.CAMERA_TEST, 1);
+						    
 						}else {
 							flashqueue.put(Flash_Type.CAMERA_END_FAIL);
 							testResult.put(Test_Type.CAMERA_TEST, 0);
@@ -1044,6 +1263,12 @@ public class AutoTest extends JFrame {
 				    
 				case GYRO_TEST : {
 					boolean gyroret = false;
+					if(mUsbCheckFail) {
+			    		System.out.println("skip, usb is faill");
+			    		testResult.put(Test_Type.GYRO_TEST, 0);
+			    		break;
+			    	}
+					gyroFlashCnt = 0;
 					flashqueue.put(Flash_Type.GYRO);
 					
 					if(device.checkGyro()){
@@ -1068,12 +1293,19 @@ public class AutoTest extends JFrame {
 				
                 case ACCE_TEST : {
                 	boolean acceret = false;
+                	acceFlashCnt = 0;
+                	if(mUsbCheckFail) {
+			    		System.out.println("skip, usb is faill");
+			    		testResult.put(Test_Type.ACCE_TEST, 0);
+			    		break;
+			    	}
 					flashqueue.put(Flash_Type.ACCE);
 					
                 	if(device.checkAcce()){
 			    	    device.controlAcce(true);
 			    	    showAccedata();
 			    	    device.controlAcce(false);
+			    	    acceret = true;
 			    	}else {
 			    		acceTestResult0.setText("驱动未找到");
 			    	}
@@ -1091,6 +1323,12 @@ public class AutoTest extends JFrame {
 				    
                 case UART1_TEST : {
                 	boolean uart1ret = false;
+                	uart1FlashCnt = 0;
+                	if(mUsbCheckFail) {
+			    		System.out.println("skip, usb is faill");
+			    		testResult.put(Test_Type.UART1_TEST, 0);
+			    		break;
+			    	}
                 	flashqueue.put(Flash_Type.UART1);
                 	if(device.uart1test()){
 			    		uart1ret = true;
@@ -1112,6 +1350,13 @@ public class AutoTest extends JFrame {
                 
                 case UART2_TEST : {
                 	boolean uart2ret = false;
+                	uart2FlashCnt = 0;
+                	if(mUsbCheckFail) {
+			    		System.out.println("skip, usb is faill");
+			    		testResult.put(Test_Type.UART2_TEST, 0);
+			    		break;
+			    	}
+                	
                 	flashqueue.put(Flash_Type.UART2);
                 	if(device.uart2test()){
 			    		uart2ret = true;
@@ -1130,8 +1375,13 @@ public class AutoTest extends JFrame {
                 }
                 
 				case NONE : {
-					autoTestBt.setEnabled(true);
+					
+					
+					checkAudioCameraResult();
+					printTestResult();
+					updateResultToSqlite();
 					autoTestInfo.setText("结束");
+                    autoTestBt.setEnabled(true);
 					autoTestBt.setBackground(Color.green);
 					break;
 				}
@@ -1151,6 +1401,188 @@ public class AutoTest extends JFrame {
 	    }
 	
     }
+    
+    
+    private void updateResultToSqlite() {
+    	
+    	int globalResult = 0;
+    	java.util.Date utilDate = new Date();
+    	int oknum = 0;
+    	//Iterator<Map.Entry<Test_Type, Integer>> iter = testResult.entrySet().iterator();
+    	
+   	    System.out.println("updateResultToSqlite ...");
+   	    if (testResult.size() == 6){
+   	    	System.out.println("result number is right 6");
+   	    } else {
+   	    	globalResult = 0;
+   	    	System.out.println("result number is wrong " + testResult.size());
+   	    }
+   	    
+   	    FactoryRecord record = new FactoryRecord();
+   	    
+   	    record.SetBar(barcode);
+   	    if (mUsbCheckFail) {
+   	        record.SetSn("000000");
+   	    } else {
+   	    	record.SetSn(chipid);
+   	    }
+    	
+   	    java.sql.Timestamp stp = new java.sql.Timestamp(utilDate.getTime());
+   	    record.SetTime(stp);
+   	    System.out.println(stp);
+   	    
+   	    if(testResult.containsKey(Test_Type.AUDIO_TEST)) {
+   	    	int res = testResult.get(Test_Type.AUDIO_TEST);
+   	    	record.SetAudio(res);
+   	    	if(res == 1)
+   	    	    oknum++;
+   	    } else {
+   	    	record.SetAudio(-1);
+   	    }
+   	    
+   	    if(testResult.containsKey(Test_Type.CAMERA_TEST)) {
+   	    	int res = testResult.get(Test_Type.CAMERA_TEST);
+   	    	record.SetCamera(res);
+   	    	if(res == 1)
+   	    	    oknum++;
+   	    }else {
+   	    	record.SetCamera(-1);
+   	    }
+   	    
+   	    if(testResult.containsKey(Test_Type.GYRO_TEST)) {
+   	    	int res = testResult.get(Test_Type.GYRO_TEST);
+	    	record.SetGyro(res);
+	    	if(res == 1)
+	    	    oknum++;
+	    }else {
+	    	record.SetGyro(-1);
+	    }
+   	 
+   	    if(testResult.containsKey(Test_Type.ACCE_TEST)) {
+	    	int res = testResult.get(Test_Type.ACCE_TEST);
+   	    	record.SetAcce(res);
+	    	if(res == 1)
+	    	oknum++;
+	    }else {
+	    	record.SetAcce(-1);
+	    }
+   	
+   	    if(testResult.containsKey(Test_Type.UART1_TEST)) {
+   	    	int res = testResult.get(Test_Type.UART1_TEST);
+	    	record.SetUart1(res);
+	    	if(res == 1)
+	    	    oknum++;
+	    }else {
+	    	record.SetUart1(-1);
+	    }
+   	
+   	    if(testResult.containsKey(Test_Type.UART2_TEST)) {
+   	    	int res = testResult.get(Test_Type.UART2_TEST);
+	    	record.SetUart2(res);
+	    	if(res == 1)
+	    	    oknum++;
+	    }else {
+	    	record.SetUart2(-1);
+	    }
+   	    
+   	    if (oknum == (testItem.size() - 1)) {
+   	    	globalResult = 1;
+   	    	System.out.println("test case all pass" + oknum);
+   	    } else {
+   	    	System.out.println("test case is " + oknum + "/" + testItem.size());
+   	    	globalResult = 0;
+   	    }
+   	   	    
+   	    record.SetResult(globalResult);
+   	    
+   	    
+   	    FactoryRecord oldrecord = database.Read(barcode);
+   	    
+   	    if (oldrecord == null) {
+   	    	System.out.println("no record write" );
+   	        database.Write(record);
+   	    } else {
+   	    	System.out.println("has record " + oldrecord.GetBar() + "  update");
+   	    	database.Update(record);
+   	    }
+    	
+   	    if (globalResult == 1) {
+   	    	passNum++;
+   	    	passNumberTitle.setText(Integer.toString(passNum));
+   	    	device.ledPassFlash();
+   	    } else {
+   	    	failNum++;
+   	    	failNumberTitle.setText(Integer.toString(failNum));
+   	    	device.ledFailFlash();
+   	    }
+   	       	    
+    }
+    
+    private void checkAudioCameraResult() {
+    	
+    	if(testItem.contains(Test_Type.AUDIO_TEST) && !testResult.containsKey(Test_Type.AUDIO_TEST)) {
+    	
+    	    int ret = JOptionPane.showConfirmDialog(this, "是否听到声音", "测试遗漏", JOptionPane.INFORMATION_MESSAGE);
+    	    System.out.println(" 声音  " + ret);
+    	    if (ret == 0) {
+    	    	testResult.put(Test_Type.AUDIO_TEST, 1);
+    	    	cbjAudio0.setSelected(true);
+    	    } else if(ret ==  1) {
+    	    	testResult.put(Test_Type.AUDIO_TEST, 0);
+    	    	cbjAudio1.setSelected(true);
+    	    } else if (ret == 2) {
+    	    	testResult.put(Test_Type.AUDIO_TEST, -1);
+    	    }
+    	}
+    	
+    	if(testItem.contains(Test_Type.CAMERA_TEST) && !testResult.containsKey(Test_Type.CAMERA_TEST)) {
+        	
+    		int ret = JOptionPane.showConfirmDialog(this, "是否看到图像", "测试遗漏", JOptionPane.INFORMATION_MESSAGE);
+    	    System.out.println(" 图像  " + ret);
+    	    if (ret == 0) {
+    	    	testResult.put(Test_Type.CAMERA_TEST, 1);
+    	    	cbjCamera0.setSelected(true);
+    	    } else if(ret ==  1) {
+    	    	testResult.put(Test_Type.CAMERA_TEST, 0);
+    	    	cbjCamera1.setSelected(true);
+    	    } else if (ret == 2) {
+    	    	testResult.put(Test_Type.CAMERA_TEST, -1);
+    	    }
+    	}
+    	
+    }
+    
+    
+    private void printTestResult() {
+    	Iterator<Map.Entry<Test_Type, Integer>> iter = testResult.entrySet().iterator();
+    	
+    	 while (iter.hasNext()) {
+             @SuppressWarnings("rawtypes")
+			  Map.Entry entry = (Map.Entry) iter.next();
+              System.out.println("" + entry.getKey() + "" + (Integer) entry.getValue()); 
+              
+    	 }
+    	
+    }
+    
+    
+    
+    
+    /*
+    private void removeKeyFromTestResult(Test_Type key) {
+    	Iterator<Map.Entry<Test_Type, Integer>> iter = testResult.entrySet().iterator();
+    	
+   	 while (iter.hasNext()) {
+            @SuppressWarnings("rawtypes")
+			Map.Entry entry = (Map.Entry) iter.next();
+            if(entry.getKey().equals(key)) {
+            	iter.remove();
+            }
+             
+   	     }
+    }
+    */
+    
     public boolean convertYuvToBmp() {
 		TestEntry.writeLog("covertYuvToBmp +++");
 		File file = new File(TestEntry.jarPath + "\\source_data1.yuv"); // The input NV21 file
@@ -1254,9 +1686,7 @@ public class AutoTest extends JFrame {
     	
     	return ret;
 	}
-	
-	
-	
+		
 	public boolean showAccedata() {
 		boolean ret = false;
 		String command = "adb shell getevent";
@@ -1314,14 +1744,14 @@ public class AutoTest extends JFrame {
 			    try {
 				    Flash_Type cmd  = flashqueue.take();
 				
-				   // System.out.println("flashThead receive :" + cmd);
+				    System.out.println("flashThead receive :" + cmd);
 				
 				    switch(cmd) {
 				    case AUDIO : {
 				    	
 				    	audioFlash(audioFlashCnt%10);
 				    	try {
-				    		Thread.sleep(1000);				    		
+				    		Thread.sleep(500);				    		
 				    	} catch (InterruptedException e) {
 				    		e.printStackTrace();
 				    	}
@@ -1338,7 +1768,7 @@ public class AutoTest extends JFrame {
 				    
 				    case AUDIO_END_FAIL: {
 				    	audioFail();
-				    	flashqueue.clear();
+				    	flashqueue.removeIf(value -> value==Flash_Type.AUDIO);
 				    	break;
 				    }
 				    		    
@@ -1359,13 +1789,106 @@ public class AutoTest extends JFrame {
 				    case CAMERA_END_OK : {
 				    	cameraFlash(1);
 				    	cameraFlash(2);
-				    	flashqueue.clear();
+				    	flashqueue.removeIf(value -> value==Flash_Type.CAMERA);
 				    	break;
 				    }
 				    
 				    case CAMERA_END_FAIL : {
 				    	cameraFail();
-				    	flashqueue.clear();
+				    	flashqueue.removeIf(value -> value==Flash_Type.CAMERA);
+				    	break;
+				    }
+				    
+				    case GYRO : {
+				    	gyroFlash(gyroFlashCnt%5);
+				    	try {
+				    		Thread.sleep(1000);				    		
+				    	} catch (InterruptedException e) {
+				    		e.printStackTrace();
+				    	}
+				    	gyroFlashCnt++;
+				    	flashqueue.put(Flash_Type.GYRO);
+				    	break;
+				    }
+				    
+				    case GYRO_END_OK : {
+				    	flashqueue.removeIf(value -> value==Flash_Type.GYRO);
+				    	break;
+				    }
+				    
+				    case GYRO_END_FAIL : {
+				    	gyroFail();
+				    	flashqueue.removeIf(value -> value==Flash_Type.GYRO);
+				    	break;
+				    }
+				    
+				    case ACCE : {
+				    	acceFlash(acceFlashCnt%5);
+				    	try {
+				    		Thread.sleep(1000);				    		
+				    	} catch (InterruptedException e) {
+				    		e.printStackTrace();
+				    	}
+				    	acceFlashCnt++;
+				    	flashqueue.put(Flash_Type.ACCE);
+				    	break;
+				    }
+				    
+				    case ACCE_END_OK : {
+				    	flashqueue.removeIf(value -> value==Flash_Type.ACCE);
+				    	break;
+				    }
+				    
+				    case ACCE_END_FAIL : {
+				    	acceFail();
+				    	flashqueue.removeIf(value -> value==Flash_Type.ACCE);
+				    	break;
+				    }
+				    
+				    case UART1 : {
+				    	uart1Flash(uart1FlashCnt%2);
+				    	try {
+				    		Thread.sleep(1000);				    		
+				    	} catch (InterruptedException e) {
+				    		e.printStackTrace();
+				    	}
+				    	uart1FlashCnt++;
+				    	flashqueue.put(Flash_Type.UART1);
+				    	break;
+				    }
+				    
+				    case UART1_END_OK : {
+				    	flashqueue.removeIf(value -> value==Flash_Type.UART1);
+				    	break;
+				    }
+				    
+				    case UART1_END_FAIL : {
+				    	uart1Fail();
+				    	flashqueue.removeIf(value -> value==Flash_Type.UART1);
+				    	break;
+				    }
+				    
+				    case UART2 : {
+				    	uart2Flash(uart2FlashCnt%4);
+				    	try {
+				    		Thread.sleep(600);				    		
+				    	} catch (InterruptedException e) {
+				    		e.printStackTrace();
+				    	}
+				    	uart2FlashCnt++;
+				    	flashqueue.put(Flash_Type.UART2);
+				    	break;
+				    }
+				    
+				    case UART2_END_OK : {
+				    	
+				    	flashqueue.removeIf(value -> value==Flash_Type.UART2);
+				    	break;
+				    }
+				    
+				    case UART2_END_FAIL : {
+				    	uart2Fail();
+				    	flashqueue.removeIf(value -> value==Flash_Type.UART2);
 				    	break;
 				    }
 				    
@@ -1381,6 +1904,27 @@ public class AutoTest extends JFrame {
 		        }
 			
 		    }
+		}
+	}
+    
+    
+    class loadRecordThread implements Runnable {
+		@Override
+		public void run () {
+			System.out.println("loadRecordThread start ...");
+			database = new FactoryRecordSqlite();
+			
+			database.OpenRecord(dbName);
+			
+			savedRecord = database.FetchAll();
+			passRecord = database.QueryByFilter("RESULT == 1");
+			failRecord = database.QueryByFilter("RESULT == 0");
+			passNum = passRecord.size();
+			failNum = failRecord.size();
+			
+			passNumberTitle.setText(Integer.toString(passNum));
+			failNumberTitle.setText(Integer.toString(failNum));
+			
 		}
 	}
     
@@ -1429,11 +1973,12 @@ public class AutoTest extends JFrame {
      		audioIndication6.setBackground(Color.red);
      		audioIndication7.setBackground(Color.red);
     		audioIndication8.setBackground(Color.red);
-    		audioIndication9.setBackground(Color.red); 		
+    		audioIndication9.setBackground(Color.red);
+    		cbjAudio0.setVisible(false);
+    		cbjAudio1.setVisible(false);
+    		cbAudioTitle.setText("");
 	}
-    
-    
-    
+        
     void cameraFlash(int num) {
 		switch(num) {
     	case 0:
@@ -1454,6 +1999,9 @@ public class AutoTest extends JFrame {
     		cameraIndication1.setBackground(Color.red);
     		
     		cameraIndication2.setBackground(Color.red);
+    		cbjCamera0.setVisible(false);
+    		cbjCamera1.setVisible(false);
+    		cbCameraTitle.setText("");
 	}
     
     void cameraClear() {
@@ -1462,6 +2010,10 @@ public class AutoTest extends JFrame {
 		cameraIndication1.setVisible(false);
 		
 		cameraIndication2.setVisible(false);
+		
+		cbjCamera0.setVisible(false);
+		cbjCamera1.setVisible(false);
+		cbCameraTitle.setText("");
     }
     
     void gyroFlash(int num) {
@@ -1519,8 +2071,47 @@ public class AutoTest extends JFrame {
     	acceIndication3.setBackground(Color.red);
     	acceIndication4.setBackground(Color.red);
     }
+        
+    void uart1Flash(int num) {
+		switch(num) {
+    	case 0:
+    		uart1Indication0.setBackground(Color.green);
+    		break;
+    	case 1:
+    		uart1Indication1.setBackground(Color.green);
+    		break;
+    	
+    	}
+	}
     
+    void uart1Fail() {
+    	uart1Indication0.setBackground(Color.red);
+    	uart1Indication1.setBackground(Color.red);
+    }
     
+    void uart2Flash(int num) {
+		switch(num) {
+    	case 0:
+    		uart2Indication0.setBackground(Color.green);
+    		break;
+    	case 1:
+    		uart2Indication1.setBackground(Color.green);
+    		break;
+    	case 2:
+    		uart2Indication2.setBackground(Color.green);
+    		break;
+    	case 3:
+    		uart2Indication3.setBackground(Color.green);
+    		break;
+    	}
+	}
+    
+    void uart2Fail() {
+    	uart2Indication0.setBackground(Color.red);
+    	uart2Indication1.setBackground(Color.red);
+    	uart2Indication2.setBackground(Color.red);
+    	uart2Indication3.setBackground(Color.red);
+    }
     
     public void close() {
     	System.out.println("AutoTest close ...");

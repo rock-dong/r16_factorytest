@@ -82,6 +82,8 @@ public class TestEntry extends JFrame{
 		autoTestBt.setBackground(Color.GREEN);
 		autoTestBt.setForeground(Color.blue);
 		
+		createRclocalFile();
+		
 		autoTestBt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e){
@@ -196,6 +198,114 @@ public class TestEntry extends JFrame{
          
 	}
 	
+	private void createRclocalFile() {
+    	FileOutputStream in;
+    	File localOkfile = new File(TestEntry.jarPath + "\\ok.local");
+    	if(localOkfile.exists()) {
+    		System.out.println("ok.local is exist");
+    	}else {
+    		System.out.println("create ok.local");
+    		try {  
+            	
+                localOkfile.createNewFile(); // 创建文件  
+                
+            } catch (IOException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();
+                            
+            } 
+            
+            
+            
+            try {
+            	in = new FileOutputStream(localOkfile);
+            	//in.write(timebt, 0, 8);
+                //in.write(bt, 0, bt.length);  
+                StringBuffer sb = new StringBuffer();
+                String line0 = "echo 5000 > /sys/class/leds/led1/interval";
+                //sb.append(line0 + System.getProperty("line.separator"));
+                sb.append(line0 + "\n");
+                
+                String line1 = "echo 1 > /sys/class/leds/led1/blink";
+                //sb.append(line1 + System.getProperty("line.separator"));
+                sb.append(line1 + "\n");
+                
+                String line2 = "exit 0";
+                //sb.append(line2 + System.getProperty("line.separator"));
+                sb.append(line2 + "\n");
+                
+                in.write(sb.toString().getBytes("UTF-8"));
+                
+                in.flush();
+                
+                in.close();
+                
+                // boolean success=true;  
+                // System.out.println("写入文件成功");  
+            }catch (FileNotFoundException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();  
+            }catch (IOException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();  
+            } 
+            
+            
+            
+    	}
+    	
+    	File localFailfile = new File(TestEntry.jarPath + "\\fail.local");
+    	if(localFailfile.exists()) {
+    		System.out.println("fail.local is exist");
+    	}else {
+    		
+    		System.out.println("create fail.local");
+    		
+    		try {  
+                localFailfile.createNewFile(); // 创建文件  
+            } catch (IOException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();
+            } 
+            
+            try {
+            	in = new FileOutputStream(localFailfile);
+            	//in.write(timebt, 0, 8);
+                //in.write(bt, 0, bt.length);  
+                StringBuffer sb = new StringBuffer();
+                String line0 = "echo 300 > /sys/class/leds/led1/interval";
+                //sb.append(line0 + System.getProperty("line.separator"));
+                sb.append(line0 + "\n");
+                
+                String line1 = "echo 1 > /sys/class/leds/led1/blink";
+                //sb.append(line1 + System.getProperty("line.separator"));
+                sb.append(line1 + "\n");
+                
+                String line2 = "exit 0";
+                //sb.append(line2 + System.getProperty("line.separator"));
+                sb.append(line2 + "\n");
+                
+                in.write(sb.toString().getBytes("UTF-8"));
+                
+                in.flush();
+                
+                in.close();
+                
+                // boolean success=true;  
+                // System.out.println("写入文件成功");  
+            }catch (FileNotFoundException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();  
+            }catch (IOException e) {  
+                // TODO Auto-generated catch block  
+                e.printStackTrace();  
+            } 
+            
+            
+            
+    	}
+    	
+    }
 	
 	
 	public static void main(String[] args) {

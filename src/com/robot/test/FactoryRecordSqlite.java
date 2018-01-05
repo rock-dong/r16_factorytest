@@ -1,7 +1,7 @@
 package com.robot.test;
 
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
+//import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -92,7 +92,8 @@ public class FactoryRecordSqlite
     
     private void createTable() {
     	String sql = "CREATE TABLE IF NOT EXISTS " + table_name + 
-    			" (SN TEXT PRIMARY KEY    NOT NULL, " +
+    			" (BAR TEXT PRIMARY KEY    NOT NULL, " +
+    			"SN       TEXT     NOT NULL, " +
     			"TIME     TIMESTAMP     NOT NULL, " +
     			"RESULT   INT      NOT NULL, " +
     			"AUDIO    INT      NOT NULL, " +
@@ -123,7 +124,7 @@ public class FactoryRecordSqlite
     
     public List<FactoryRecord> Query(String tbname, String[] columns, String filter)
     {
-        String sql = "Select ";
+        String sql = "Select *";
 
         int i = 0;
         for (String col : columns)
@@ -138,46 +139,52 @@ public class FactoryRecordSqlite
         return Query(sql);
     }
 
-    
-    public FactoryRecord Read(String thing_id)
+    public List<FactoryRecord> QueryByFilter(String filter)
     {
-        String sql = "select * from " + table_name + " where thing_id = \"" + thing_id + "\";";
+        
+        String sql = "Select * from " + table_name + " where " + filter + ";";
+
+        return Query(sql);
+    }
+    
+    public FactoryRecord Read(String bar)
+    {
+        String sql = "select * from " + table_name + " where BAR = \"" + bar + "\";";
         return QueryOne(sql);
     }
 
     
     public void Write(FactoryRecord a)
     {
-        String sql = "insert into "+table_name+" values(?,?,?,?,?)";
+        String sql = "insert into "+table_name+" values(?,?,?,?,?,?,?,?,?,?)";
         PreparedStatement preState;
-        Boolean result = false;
+        //Boolean result = false;
         try
         {
             preState = connection.prepareStatement(sql);
-            preState.setString(1, a.GetSn());
-            preState.setTimestamp(2, a.GetTime());
-            preState.setInt(3, a.GetResult());
-            preState.setInt(4, a.GetAudio());
-            preState.setInt(5, a.GetCamera());
-            preState.setInt(6, a.GetGyro());
-            preState.setInt(7, a.GetAcce());
-            preState.setInt(8, a.GetUart1());
-            preState.setInt(9, a.GetUart2());
+            preState.setString(1, a.GetBar());
+            preState.setString(2, a.GetSn());
+            preState.setTimestamp(3, a.GetTime());
+            preState.setInt(4, a.GetResult());
+            preState.setInt(5, a.GetAudio());
+            preState.setInt(6, a.GetCamera());
+            preState.setInt(7, a.GetGyro());
+            preState.setInt(8, a.GetAcce());
+            preState.setInt(9, a.GetUart1());
+            preState.setInt(10, a.GetUart2());
             
-            result = preState.execute();
-            if(result)
-            {
-                System.out.println("Write OK");
-                return;
-            }
-                
+            preState.execute();
+            
+            
+            System.out.println("Write OK");
         }
         catch (SQLException e)
         {
             // TODO Auto-generated catch block
+        	System.out.println("Write FAILED");
             e.printStackTrace();
         }
-        System.out.println("Write FAILED");
+        
         /*
         String sql = "insert into " + table_name + " values( \"" + a.GetThingID() + "\", " + "\"" + a.GetName() + "\", "
                 + "\"" + a.GetClassID().toString() + "\", " + "\"\",\""+a.config+"\""+ ") ;";
@@ -187,15 +194,15 @@ public class FactoryRecordSqlite
     }
 
     
-    public void Remove(String sn)
+    public void Remove(String bar)
     {
-        String sql = "delete from "+table_name+" where SN=?;";
+        String sql = "delete from "+table_name+" where BAR=?;";
         PreparedStatement preState;
         Boolean result = false;
         try
         {
             preState = connection.prepareStatement(sql);
-            preState.setString(1, sn);
+            preState.setString(1, bar);
             result = preState.execute();
             if(result)
             {
@@ -217,20 +224,22 @@ public class FactoryRecordSqlite
     
     public void Update(FactoryRecord a)
     {
-        String sql = "update "+table_name+" set SN=?, TIME=?,RESULT=?, AUDIO=?, CAMERA=?, GYRO=?, ACCE=?, UART1=?, UART2=? where SN=?;";
+        String sql = "update "+table_name+" set BAR=?, SN=?, TIME=?, RESULT=?, AUDIO=?, CAMERA=?, GYRO=?, ACCE=?, UART1=?, UART2=? where BAR=?";
         PreparedStatement preState;
         try
         {
             preState = connection.prepareStatement(sql);
-            preState.setString(1, a.GetSn());
-            preState.setTimestamp(2, a.GetTime());
-            preState.setInt(3, a.GetResult());
-            preState.setInt(4, a.GetAudio());
-            preState.setInt(5, a.GetCamera());
-            preState.setInt(6, a.GetGyro());
-            preState.setInt(7, a.GetAcce());
-            preState.setInt(8, a.GetUart1());
-            preState.setInt(9, a.GetUart2());
+            preState.setString(1, a.GetBar());
+            preState.setString(2, a.GetSn());
+            preState.setTimestamp(3, a.GetTime());
+            preState.setInt(4, a.GetResult());
+            preState.setInt(5, a.GetAudio());
+            preState.setInt(6, a.GetCamera());
+            preState.setInt(7, a.GetGyro());
+            preState.setInt(8, a.GetAcce());
+            preState.setInt(9, a.GetUart1());
+            preState.setInt(10, a.GetUart2());
+            preState.setString(11, a.GetBar());
             
             preState.executeUpdate();
         }
@@ -252,10 +261,10 @@ public class FactoryRecordSqlite
     }
 
     
-    public void UpdateSN(String old_SN, FactoryRecord a)
+    public void UpdateBAR(String old_BAR, FactoryRecord a)
     {
-        String sql = "update " + table_name + " set SN = \"" + a.GetSn() + "\"" + " where SN = \""
-                + old_SN + "\"";
+        String sql = "update " + table_name + " set BAR = \"" + a.GetBar() + "\"" + " where BAR = \""
+                + old_BAR + "\"";
         Execute(sql);
     }
 
@@ -271,17 +280,28 @@ public class FactoryRecordSqlite
 
             while (rs.next())
             {
+            	String bar = rs.getString("BAR");
                 String sn = rs.getString("SN");
                 Timestamp time = rs.getTimestamp("TIME");
                 int result = rs.getInt("RESULT");
-                String details = rs.getString("DETAILS");
+                int audio = rs.getInt("AUDIO");
+                int camera = rs.getInt("CAMERA");
+                int gyro = rs.getInt("GYRO");
+                int acce = rs.getInt("ACCE");
+                int uart1 = rs.getInt("UART1");
+                int uart2 = rs.getInt("UART2");
 
                 FactoryRecord p = new FactoryRecord();
+                p.SetBar(bar);
                 p.SetSn(sn);
                 p.SetTime(time);
                 p.SetResult(result);
-                p.SetDetails(details);
-
+                p.SetAudio(audio);
+                p.SetCamera(camera);
+                p.SetGyro(gyro);
+                p.SetAcce(acce);
+                p.SetUart1(uart1);
+                p.SetUart2(uart2);
                 ret.add(p);
             }
 
@@ -325,17 +345,29 @@ public class FactoryRecordSqlite
 
             if (rs.next())
             {
+            	String bar = rs.getString("BAR");
                 String sn = rs.getString("SN");
                 Timestamp time = rs.getTimestamp("TIME");
                 int result = rs.getInt("RESULT");
-                String details = rs.getString("DETAILS");
+                int audio = rs.getInt("AUDIO");
+                int camera = rs.getInt("CAMERA");
+                int gyro = rs.getInt("GYRO");
+                int acce = rs.getInt("ACCE");
+                int uart1 = rs.getInt("UART1");
+                int uart2 = rs.getInt("UART2");
                 // String location = rs.getString("location");
 
                 FactoryRecord p = new FactoryRecord();
+                p.SetBar(bar);
                 p.SetSn(sn);
                 p.SetTime(time);
                 p.SetResult(result);
-                p.SetDetails(details);
+                p.SetAudio(audio);
+                p.SetCamera(camera);
+                p.SetGyro(gyro);
+                p.SetAcce(acce);
+                p.SetUart1(uart1);
+                p.SetUart2(uart2);
 
                 ret = p;
             }

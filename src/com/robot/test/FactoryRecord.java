@@ -8,8 +8,10 @@ public class FactoryRecord
     /*
      * Thing Property
      */
+	public String bar;
     public String sn;
-   
+    
+    
     public Timestamp time;
     public int  result;
     public int  audio;
@@ -20,94 +22,46 @@ public class FactoryRecord
     public int uart2;
     
    
+    public final String GetBar(){return bar;}
     public final String GetSn(){return sn;}
 
     // public boolean active = false;
 
-    public final Timestamp GetTime()
-    {
-        return time;
-    }
+    public final Timestamp GetTime(){return time;}
 
-    public final int GetResult()
-    {
-        return result;
-    }
+    public final int GetResult(){return result;}
 
-    public final int GetAudio()
-    {
-        return audio;
-    }
+    public final int GetAudio(){return audio;}
     
-    public final int GetCamera()
-    {
-        return camera;
-    }
+    public final int GetCamera(){return camera;}
     
-    public final int GetGyro()
-    {
-        return gyro;
-    }
+    public final int GetGyro(){return gyro;}
 
-    public final int GetAcce()
-    {
-        return acce;
-    }
+    public final int GetAcce(){return acce;}
     
-    public final int GetUart1()
-    {
-        return uart1;
-    }
+    public final int GetUart1(){return uart1;}
     
-    public final int GetUart2()
-    {
-        return uart2;
-    }
+    public final int GetUart2(){return uart2;}
     
-    public void SetSn(String str)
-    {
-        sn = str;
-    }
+    public void SetBar(String str){bar = str;}
+    
+    public void SetSn(String str){sn = str;}
 
-    public void SetTime(Timestamp str)
-    {
-        time = str;
-    }
+    public void SetTime(Timestamp str){time = str;}
 
-    public void SetResult(int rst)
-    {
-        result = rst;
-    }
+    public void SetResult(int rst){result = rst;}
 
-    public void SetAudio(int value)
-    {
-        audio = value;
-    }
+    public void SetAudio(int value){audio = value;}
     
-    public void SetCamera(int value)
-    {
-        camera = value;
-    }
+    public void SetCamera(int value){camera = value;}
     
-    public void SetGyro(int value)
-    {
-        gyro = value;
-    }
+    public void SetGyro(int value){gyro = value;}
 
-    public void SetAcce(int value)
-    {
-        acce = value;
-    }
+    public void SetAcce(int value){acce = value;}
     
-    public void SetUart1(int value)
-    {
-        uart1 = value;
-    }
+    public void SetUart1(int value){uart1 = value;}
     
-    public void SetUart2(int value)
-    {
-        uart2 = value;
-    }
+    public void SetUart2(int value){uart2 = value;}
     
     
 

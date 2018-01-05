@@ -1,6 +1,7 @@
 package com.robot.test;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
 
@@ -74,8 +75,10 @@ public class DeviceControl {
 	
 	
 	
+	
+	
 	public String audioAdbTest() {
-    	String command = "adb shell tinyplayer /media/boot.mp3";
+    	String command = "adb shell tinyplayer /media/ring.mp3";
     	
     	
     	
@@ -569,5 +572,128 @@ public class DeviceControl {
     	
     	return ret;
 	}
+	
+	
+	public boolean ledPassFlash() {
+		boolean ret = false;
+		String command = "adb shell \"echo 5000 > /sys/class/leds/led1/interval\"";
+		
+    	
+    	System.out.println(command);
+    	try {
+    	    Process process = Runtime.getRuntime().exec(command);
+    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	   
+    	    String line = bufferedReader.readLine();
+    	   
+    	    while(line != null) {
+    	        System.out.println(line);  
+
+    	        line = bufferedReader.readLine();
+    	    }
+    	    System.out.println("adb print end");
+    	    process.destroy();
+    	        	    
+    	    
+    	}catch(Exception e) {
+    	    e.printStackTrace();
+    	}
+    	
+    	File localOkfile = new File(TestEntry.jarPath + "\\ok.local");
+    	
+    	command = "adb push ok.local /etc/rc.local";
+    	
+    	if(localOkfile.exists()) {
+    		System.out.println("ok.local is exist");
+    		
+    		System.out.println(command);
+        	try {
+        	    Process process = Runtime.getRuntime().exec(command);
+        	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        	   
+        	    String line = bufferedReader.readLine();
+        	   
+        	    while(line != null) {
+        	        System.out.println(line);  
+
+        	        line = bufferedReader.readLine();
+        	    }
+        	    System.out.println("adb print end");
+        	    process.destroy();
+        	        	    
+        	    
+        	}catch(Exception e) {
+        	    e.printStackTrace();
+        	}
+    		
+    	} else {
+    		System.out.println("ok.local not exist, can not push");
+    	}
+    	
+    	return ret;
+	}
+	
+    public boolean ledFailFlash() {
+    	boolean ret = false;
+		String command = "adb shell \"echo 200 > /sys/class/leds/led1/interval\"";;
+		
+    	
+    	System.out.println(command);
+    	try {
+    	    Process process = Runtime.getRuntime().exec(command);
+    	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	   
+    	    String line = bufferedReader.readLine();
+    	   
+    	    while(line != null) {
+    	        System.out.println(line);  
+
+    	        line = bufferedReader.readLine();
+    	    }
+    	    System.out.println("adb print end");
+    	    process.destroy();
+    	        	    
+    	    
+    	}catch(Exception e) {
+    	    e.printStackTrace();
+    	}
+    	
+        File localOkfile = new File(TestEntry.jarPath + "\\fail.local");
+    	
+    	command = "adb push fail.local /etc/rc.local";
+    	
+    	if(localOkfile.exists()) {
+    		System.out.println("fail.local is exist");
+    		
+    		System.out.println(command);
+        	try {
+        	    Process process = Runtime.getRuntime().exec(command);
+        	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        	   
+        	    String line = bufferedReader.readLine();
+        	   
+        	    while(line != null) {
+        	        System.out.println(line);  
+
+        	        line = bufferedReader.readLine();
+        	    }
+        	    System.out.println("adb print end");
+        	    process.destroy();
+        	        	    
+        	    
+        	}catch(Exception e) {
+        	    e.printStackTrace();
+        	}
+    		
+    	} else {
+    		System.out.println("fail.local not exist, can not push");
+    	}
+    	
+    	return ret;
+	}
+	
+    
+    
+    
 	
 }
