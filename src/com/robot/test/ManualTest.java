@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 //import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -63,11 +64,27 @@ public class ManualTest extends JFrame {
 	JLabel gyroTestResult1 = new JLabel("");
 	JLabel gyroTestResult2 = new JLabel("");
 	
+	JLabel gyroXMinTitle = new JLabel(""); 
+	JLabel gyroXMaxTitle = new JLabel("");
+	JLabel gyroYMinTitle = new JLabel(""); 
+	JLabel gyroYMaxTitle = new JLabel("");
+	JLabel gyroZMinTitle = new JLabel(""); 
+	JLabel gyroZMaxTitle = new JLabel("");
+	
+	
 	JLabel acceTestTitle = new JLabel("º”ÀŸ∂»");
 	JButton acceTestBt = new JButton("≤‚ ‘");
 	JLabel acceTestResult0 = new JLabel(""); 
 	JLabel acceTestResult1 = new JLabel("");
 	JLabel acceTestResult2 = new JLabel("");
+	
+	
+	JLabel acceXMinTitle = new JLabel(""); 
+	JLabel acceXMaxTitle = new JLabel("");
+	JLabel acceYMinTitle = new JLabel(""); 
+	JLabel acceYMaxTitle = new JLabel("");
+	JLabel acceZMinTitle = new JLabel(""); 
+	JLabel acceZMaxTitle = new JLabel("");
 	
 	JLabel logline0 = new JLabel("");
 	JLabel logline1 = new JLabel("");
@@ -103,6 +120,20 @@ public class ManualTest extends JFrame {
 	
 	int audioFlashCnt = 0;
 	int cameraFlashCnt = 0;
+	
+	int gyroXMinKey = 0;
+	int gyroXMaxKey = 0;
+	int gyroYMinKey = 0;
+	int gyroYMaxKey = 0;
+	int gyroZMinKey = 0;
+	int gyroZMaxKey = 0;
+	
+	int acceXMinKey = 0;
+	int acceXMaxKey = 0;
+	int acceYMinKey = 0;
+	int acceYMaxKey = 0;
+	int acceZMinKey = 0;
+	int acceZMaxKey = 0;
 	
 	private enum Test_Type {
         NONE,USB_TEST, AUDIO_TEST, VOLUME_UP, VOLUME_DOWN, CAMERA_TEST, GYRO_TEST, ACCE_TEST, UART1_TEST, UART2_TEST}
@@ -356,6 +387,27 @@ public class ManualTest extends JFrame {
 	        gyroTestResult2.setBounds(220, 490, 200, 25);
 	        gyroTestResult2.setFont(new Font("Dialog", 1, 15));
 	        
+	        add(gyroXMinTitle);
+	        gyroXMinTitle.setBounds(430, 430, 150, 25);
+	        gyroXMinTitle.setFont(new Font("Dialog", 1, 15));
+	        add(gyroXMaxTitle);
+	        gyroXMaxTitle.setBounds(590, 430, 150, 25);
+	        gyroXMaxTitle.setFont(new Font("Dialog", 1, 15));
+	       
+	        add(gyroYMinTitle);
+	        gyroYMinTitle.setBounds(430, 460, 150, 25);
+	        gyroYMinTitle.setFont(new Font("Dialog", 1, 15));
+	        add(gyroYMaxTitle);
+	        gyroYMaxTitle.setBounds(590, 460, 150, 25);
+	        gyroYMaxTitle.setFont(new Font("Dialog", 1, 15));
+	        
+	        add(gyroZMinTitle);
+	        gyroZMinTitle.setBounds(430, 490, 150, 25);
+	        gyroZMinTitle.setFont(new Font("Dialog", 1, 15));
+	        add(gyroZMaxTitle);
+	        gyroZMaxTitle.setBounds(590, 490, 150, 25);
+	        gyroZMaxTitle.setFont(new Font("Dialog", 1, 15));
+	        
 	        
 	        add(acceTestTitle);
 			acceTestTitle.setBounds(30, 530, 80, 25);
@@ -392,6 +444,28 @@ public class ManualTest extends JFrame {
 	        add(acceTestResult2);
 	        acceTestResult2.setBounds(220, 590, 200, 25);
 	        acceTestResult2.setFont(new Font("Dialog", 1, 15));
+	        
+	        
+	        add(acceXMinTitle);
+	        acceXMinTitle.setBounds(430, 530, 150, 25);
+	        acceXMinTitle.setFont(new Font("Dialog", 1, 15));
+	        add(acceXMaxTitle);
+	        acceXMaxTitle.setBounds(590, 530, 150, 25);
+	        acceXMaxTitle.setFont(new Font("Dialog", 1, 15));
+	       
+	        add(acceYMinTitle);
+	        acceYMinTitle.setBounds(430, 560, 150, 25);
+	        acceYMinTitle.setFont(new Font("Dialog", 1, 15));
+	        add(acceYMaxTitle);
+	        acceYMaxTitle.setBounds(590, 560, 150, 25);
+	        acceYMaxTitle.setFont(new Font("Dialog", 1, 15));
+	        
+	        add(acceZMinTitle);
+	        acceZMinTitle.setBounds(430, 590, 150, 25);
+	        acceZMinTitle.setFont(new Font("Dialog", 1, 15));
+	        add(acceZMaxTitle);
+	        acceZMaxTitle.setBounds(590, 590, 150, 25);
+	        acceZMaxTitle.setFont(new Font("Dialog", 1, 15));
 	        
 	        add(uart1TestTitle);
 	        uart1TestTitle.setBounds(30, 620, 80, 25);
@@ -664,7 +738,23 @@ public class ManualTest extends JFrame {
 		String command = "adb shell getevent";
 		int num = 0;
 		//testState = Test_Type.GSENSOR_TEST;
-    	
+		BigInteger xKey;
+		gyroXMinKey = 0;
+		gyroXMaxKey = 0;
+		gyroYMinKey = 0;
+		gyroYMaxKey = 0;
+		gyroZMinKey = 0;
+		gyroZMaxKey = 0;
+		
+		gyroXMinTitle.setText("");
+	    gyroXMaxTitle.setText("");
+	    gyroYMinTitle.setText("");
+	    gyroYMaxTitle.setText("");
+	    gyroZMinTitle.setText("");
+	    gyroZMaxTitle.setText("");
+	    
+		
+		
     	System.out.println(command);
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -672,24 +762,51 @@ public class ManualTest extends JFrame {
     	   
     	    String line = bufferedReader.readLine();
     	   
-    	    while(line != null && num < 30) {
+    	    while(line != null && num < 50) {
     	        System.out.println(line);  
     	        
     	        if(line.contains("dev/input/event4")){
     	        	if(line.contains("0003 0000")){
     	        		int startIndex = line.indexOf("0000");
+    	        		
     	        		String content = line.substring(startIndex, line.length());
+    	        		String keyValue = line.substring(startIndex+4, line.length()).trim();
     	        		gyroTestResult0.setText(content);
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		if(xKey.intValue() > gyroXMaxKey) {
+    	        			gyroXMaxKey = xKey.intValue();
+    	        		}
+    	        		if(xKey.intValue() < gyroXMinKey) {
+    	        			gyroXMinKey = xKey.intValue();
+    	        		}
+    	        		
+    	        		
     	        	}
     	        	if(line.contains("0003 0001")){
     	        		int startIndex = line.indexOf("0001");
     	        		String content = line.substring(startIndex, line.length());
+    	        		String keyValue = line.substring(startIndex+4, line.length()).trim();
     	        		gyroTestResult1.setText(content);
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		if(xKey.intValue() > gyroYMaxKey) {
+    	        			gyroYMaxKey = xKey.intValue();
+    	        		}
+    	        		if(xKey.intValue() < gyroYMinKey) {
+    	        			gyroYMinKey = xKey.intValue();
+    	        		}
     	        	}
     	        	if(line.contains("0003 0002")){
     	        		int startIndex = line.indexOf("0002");
     	        		String content = line.substring(startIndex, line.length());
+    	        		String keyValue = line.substring(startIndex+4, line.length()).trim();
     	        		gyroTestResult2.setText(content);
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		if(xKey.intValue() > gyroZMaxKey) {
+    	        			gyroZMaxKey = xKey.intValue();
+    	        		}
+    	        		if(xKey.intValue() < gyroZMinKey) {
+    	        			gyroZMinKey = xKey.intValue();
+    	        		}
     	        	}
     	        	num ++;
     	        }
@@ -698,7 +815,13 @@ public class ManualTest extends JFrame {
     	    }
     	    System.out.println("adb print end");
     	    process.destroy();
-    	        	    
+    	    
+    	    gyroXMinTitle.setText(Integer.toString(gyroXMinKey));
+    	    gyroXMaxTitle.setText(Integer.toString(gyroXMaxKey));
+    	    gyroYMinTitle.setText(Integer.toString(gyroYMinKey));
+    	    gyroYMaxTitle.setText(Integer.toString(gyroYMaxKey));
+    	    gyroZMinTitle.setText(Integer.toString(gyroZMinKey));
+    	    gyroZMaxTitle.setText(Integer.toString(gyroZMaxKey));
     	    
     	}catch(Exception e) {
     	    e.printStackTrace();
@@ -716,6 +839,26 @@ public class ManualTest extends JFrame {
 		int num = 0;
 		//testState = Test_Type.GSENSOR_TEST;
     	
+		BigInteger xKey;
+		acceXMinKey = 0;
+		acceXMaxKey = 0;
+		acceYMinKey = 0;
+		acceYMaxKey = 0;
+		acceZMinKey = 0;
+		acceZMaxKey = 0;
+		
+		acceXMinTitle.setText("");
+	    acceXMaxTitle.setText("");
+	    acceYMinTitle.setText("");
+	    acceYMaxTitle.setText("");
+	    acceZMinTitle.setText("");
+	    acceZMaxTitle.setText("");
+	    
+	    
+	    boolean firstXKey = false;
+	    boolean firstYKey = false;
+	    boolean firstZKey = false;
+	    
     	System.out.println(command);
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -731,16 +874,64 @@ public class ManualTest extends JFrame {
     	        		int startIndex = line.indexOf("0000");
     	        		String content = line.substring(startIndex, line.length());
     	        		acceTestResult0.setText(content);
+    	        		
+    	        		
+    	        		String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(!firstXKey) {
+    	        			acceXMinKey = xKey.intValue();
+    	        			firstXKey = true;
+    	        		}
+    	        		if(xKey.intValue() > acceXMaxKey) {
+    	        			acceXMaxKey = xKey.intValue();
+    	        		}
+    	        		if(xKey.intValue() < acceXMinKey) {
+    	        			acceXMinKey = xKey.intValue();
+    	        		}
+    	        		
     	        	}
     	        	if(line.contains("0003 0001")){
     	        		int startIndex = line.indexOf("0001");
     	        		String content = line.substring(startIndex, line.length());
     	        		acceTestResult1.setText(content);
+                        String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		if(!firstYKey) {
+    	        			acceYMinKey = xKey.intValue();
+    	        			firstYKey = true;
+    	        		}
+    	        		
+    	        		if(xKey.intValue() > acceYMaxKey) {
+    	        			acceYMaxKey = xKey.intValue();
+    	        		}
+    	        		if(xKey.intValue() < acceYMinKey) {
+    	        			acceYMinKey = xKey.intValue();
+    	        		}
     	        	}
     	        	if(line.contains("0003 0002")){
     	        		int startIndex = line.indexOf("0002");
     	        		String content = line.substring(startIndex, line.length());
     	        		acceTestResult2.setText(content);
+    	        		
+                        String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(!firstZKey) {
+    	        			acceZMinKey = xKey.intValue();
+    	        			firstZKey = true;
+    	        		}
+    	        		
+    	        		if(xKey.intValue() > acceZMaxKey) {
+    	        			acceZMaxKey = xKey.intValue();
+    	        		}
+    	        		if(xKey.intValue() < acceZMinKey) {
+    	        			acceZMinKey = xKey.intValue();
+    	        		}
+    	        		
     	        	}
     	        	num ++;
     	        }
@@ -750,6 +941,12 @@ public class ManualTest extends JFrame {
     	    System.out.println("adb print end");
     	    process.destroy();
     	        	    
+    	    acceXMinTitle.setText(Integer.toString(acceXMinKey));
+    	    acceXMaxTitle.setText(Integer.toString(acceXMaxKey));
+    	    acceYMinTitle.setText(Integer.toString(acceYMinKey));
+    	    acceYMaxTitle.setText(Integer.toString(acceYMaxKey));
+    	    acceZMinTitle.setText(Integer.toString(acceZMinKey));
+    	    acceZMaxTitle.setText(Integer.toString(acceZMaxKey));
     	    
     	}catch(Exception e) {
     	    e.printStackTrace();

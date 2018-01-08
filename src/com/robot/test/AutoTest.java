@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -18,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,6 +33,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -146,6 +151,31 @@ public class AutoTest extends JFrame {
 	JLabel gyroTestResult1 = new JLabel("");
 	JLabel gyroTestResult2 = new JLabel("");
 	
+	JLabel gyroMinTitle = new JLabel("最小值",JLabel.CENTER);
+	JLabel gyroMaxTitle = new JLabel("最大值",JLabel.CENTER);
+	JLabel gyroMeasureTitle = new JLabel("角度",JLabel.CENTER);
+	JLabel gyroXTitle = new JLabel("X轴",JLabel.CENTER);
+	JLabel gyroYTitle = new JLabel("Y轴",JLabel.CENTER);
+	JLabel gyroZTitle = new JLabel("Z轴",JLabel.CENTER);
+	
+	boolean gyroLockFlag = false;
+	JButton gyroXYZLockTitle = new JButton("锁定");
+	
+	JTextField gyroXMinValue = new JTextField("-100");
+	JTextField gyroXMaxValue = new JTextField("100");
+	JTextField gyroYMinValue = new JTextField("-150");
+	JTextField gyroYMaxValue = new JTextField("100");
+	JTextField gyroZMinValue = new JTextField("-200");
+	JTextField gyroZMaxValue = new JTextField("250");
+	
+	String gyroXMinKey = "-100";
+	String gyroXMaxKey = "100";
+	String gyroYMinKey = "-150";
+	String gyroYMaxKey = "100";
+	String gyroZMinKey = "-200";
+	String gyroZMaxKey = "250";
+	
+	
 	JButton acceIndication0 = new JButton("");
 	JButton acceIndication1 = new JButton("");
 	JButton acceIndication2 = new JButton("");
@@ -154,6 +184,31 @@ public class AutoTest extends JFrame {
 	JLabel acceTestResult0 = new JLabel(""); 
 	JLabel acceTestResult1 = new JLabel("");
 	JLabel acceTestResult2 = new JLabel("");
+	
+	JLabel acceMinTitle = new JLabel("最小值");
+	JLabel acceMaxTitle = new JLabel("最大值");
+	JLabel acceMeasureTitle = new JLabel("加速度");
+	JLabel acceXTitle = new JLabel("X轴");
+	JLabel acceYTitle = new JLabel("Y轴");
+	JLabel acceZTitle = new JLabel("Z轴");
+	
+	boolean acceLockFlag = false;
+	JButton acceXYZLockTitle = new JButton("锁定");
+	
+	JTextField acceXMinValue = new JTextField("160");
+	JTextField acceXMaxValue = new JTextField("190");
+	JTextField acceYMinValue = new JTextField("5");
+	JTextField acceYMaxValue = new JTextField("20");
+	JTextField acceZMinValue = new JTextField("960");
+	JTextField acceZMaxValue = new JTextField("1020");
+	
+	String acceXMinKey = "160";
+	String acceXMaxKey = "190";
+	String acceYMinKey = "5";
+	String acceYMaxKey = "20";
+	String acceZMinKey = "960";
+	String acceZMaxKey = "1020";
+	
 	
 	JButton uart1Indication0 = new JButton("");
 	JButton uart1Indication1 = new JButton("");
@@ -518,6 +573,139 @@ public class AutoTest extends JFrame {
         gyroTestResult2.setFont(new Font("Dialog", 1, 12));
         
         
+        add(gyroMinTitle);
+        gyroMinTitle.setBounds(750, 300, 100, 30);
+        add(gyroMeasureTitle);
+        gyroMeasureTitle.setBounds(850, 300, 100, 30);
+        add(gyroMaxTitle);
+        gyroMaxTitle.setBounds(950, 300, 100, 30);
+        
+        
+        add(gyroXMinValue);
+        gyroXMinValue.setBounds(750, 340, 100, 25);
+        gyroXMinValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				gyroXMinKey = gyroXMinValue.getText();
+			}
+        });
+        
+        add(gyroXTitle);
+        gyroXTitle.setBounds(850, 340, 100, 25);
+    	add(gyroXMaxValue);
+    	gyroXMaxValue.setBounds(950, 340, 100, 25);
+        gyroXMaxValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				gyroXMaxKey = gyroXMinValue.getText();
+			}
+        });
+        
+    	add(gyroYMinValue);
+        gyroYMinValue.setBounds(750, 365, 100, 25);
+        
+        gyroYMinValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				gyroYMinKey = gyroYMinValue.getText();
+			}
+        });
+        
+        
+        
+        add(gyroYTitle);
+        gyroYTitle.setBounds(850, 365, 100, 25);
+    	add(gyroYMaxValue);
+    	gyroYMaxValue.setBounds(950, 365, 100, 25);
+        gyroYMaxValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				gyroYMaxKey = gyroYMaxValue.getText();
+			}
+        });
+        
+    	add(gyroZMinValue);
+        gyroZMinValue.setBounds(750, 390, 100, 25);
+        gyroZMinValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				gyroZMinKey = gyroZMinValue.getText();
+			}
+        });
+        
+        
+        add(gyroZTitle);
+        gyroZTitle.setBounds(850, 390, 100, 25);
+    	add(gyroZMaxValue);
+    	gyroZMaxValue.setBounds(950, 390, 100, 25);
+        gyroZMaxValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				gyroZMaxKey = gyroZMaxValue.getText();
+			}
+        });
+        
+        
+        add(gyroXYZLockTitle);
+        gyroXYZLockTitle.setBounds(1050, 365, 100, 25);
+        gyroXYZLockTitle.setForeground(Color.blue);
+        gyroXYZLockTitle.setBackground(Color.red);
+        gyroXYZLockTitle.setFont(new Font("Dialog", 1, 20));
+        gyroXYZLockTitle.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.out.println("auto test start");
+				
+						if(gyroLockFlag) {
+							gyroXMinValue.setEditable(true);
+							gyroXMaxValue.setEditable(true);
+							gyroYMinValue.setEditable(true);
+							gyroYMaxValue.setEditable(true);
+							gyroZMinValue.setEditable(true);
+							gyroZMaxValue.setEditable(true);
+							gyroXYZLockTitle.setText("锁定");
+							gyroXYZLockTitle.setBackground(Color.red);
+							gyroLockFlag = false;
+						} else {
+							gyroXMinValue.setEditable(false);
+							gyroXMaxValue.setEditable(false);
+							gyroYMinValue.setEditable(false);
+							gyroYMaxValue.setEditable(false);
+							gyroZMinValue.setEditable(false);
+							gyroZMaxValue.setEditable(false);
+							gyroXYZLockTitle.setBackground(Color.green);
+							gyroXYZLockTitle.setText("解锁");
+							gyroLockFlag = true;
+						}
+				
+			}
+		});
+        
+        
         add(acceIndication0);
         acceIndication0.setBounds(400, 300, 20, 30);
         acceIndication0.setBackground(Color.blue);
@@ -563,6 +751,143 @@ public class AutoTest extends JFrame {
         add(acceTestResult2);
         acceTestResult2.setBounds(400, 390, 100, 25);
         acceTestResult2.setFont(new Font("Dialog", 1, 12));
+        
+        
+        
+        add(acceMinTitle);
+        acceMinTitle.setBounds(750, 430, 100, 30);
+        add(acceMeasureTitle);
+        acceMeasureTitle.setBounds(850, 430, 100, 30);
+        add(acceMaxTitle);
+        acceMaxTitle.setBounds(950, 430, 100, 30);
+        
+        
+        add(acceXMinValue);
+        acceXMinValue.setBounds(750, 470, 100, 25);
+        acceXMinValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				acceXMinKey = acceXMinValue.getText();
+			}
+        });
+        
+        add(acceXTitle);
+        acceXTitle.setBounds(850, 470, 100, 25);
+    	add(acceXMaxValue);
+    	acceXMaxValue.setBounds(950, 470, 100, 25);
+        acceXMaxValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				acceXMaxKey = acceXMinValue.getText();
+			}
+        });
+        
+    	add(acceYMinValue);
+        acceYMinValue.setBounds(750, 495, 100, 25);
+        
+        acceYMinValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				acceYMinKey = acceYMinValue.getText();
+			}
+        });
+        
+        
+        
+        add(acceYTitle);
+        acceYTitle.setBounds(850, 495, 100, 25);
+    	add(acceYMaxValue);
+    	acceYMaxValue.setBounds(950, 495, 100, 25);
+        acceYMaxValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				acceYMaxKey = acceYMaxValue.getText();
+			}
+        });
+        
+    	add(acceZMinValue);
+        acceZMinValue.setBounds(750, 520, 100, 25);
+        acceZMinValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				acceZMinKey = acceZMinValue.getText();
+			}
+        });
+        
+        
+        add(acceZTitle);
+        acceZTitle.setBounds(850, 520, 100, 25);
+    	add(acceZMaxValue);
+    	acceZMaxValue.setBounds(950, 520, 100, 25);
+        acceZMaxValue.addCaretListener(new CaretListener(){
+        	
+
+			@Override
+			public void caretUpdate(CaretEvent arg0) {
+				// TODO Auto-generated method stub
+				//System.out.println(gyroXMinValue.getText());
+				acceZMaxKey = acceZMaxValue.getText();
+			}
+        });
+        
+        
+        add(acceXYZLockTitle);
+        acceXYZLockTitle.setBounds(1050, 495, 100, 25);
+        acceXYZLockTitle.setForeground(Color.blue);
+        acceXYZLockTitle.setBackground(Color.red);
+        acceXYZLockTitle.setFont(new Font("Dialog", 1, 20));
+        acceXYZLockTitle.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.out.println("auto test start");
+				
+						if(acceLockFlag) {
+							acceXMinValue.setEditable(true);
+							acceXMaxValue.setEditable(true);
+							acceYMinValue.setEditable(true);
+							acceYMaxValue.setEditable(true);
+							acceZMinValue.setEditable(true);
+							acceZMaxValue.setEditable(true);
+							acceXYZLockTitle.setText("锁定");
+							acceXYZLockTitle.setBackground(Color.red);
+							acceLockFlag = false;
+						} else {
+							acceXMinValue.setEditable(false);
+							acceXMaxValue.setEditable(false);
+							acceYMinValue.setEditable(false);
+							acceYMaxValue.setEditable(false);
+							acceZMinValue.setEditable(false);
+							acceZMaxValue.setEditable(false);
+							acceXYZLockTitle.setBackground(Color.green);
+							acceXYZLockTitle.setText("解锁");
+							acceLockFlag = true;
+						}
+				
+			}
+		});
+        
+        
+        
         
         add(uart1Indication0);
         uart1Indication0.setBounds(500, 300, 50, 30);
@@ -1268,6 +1593,13 @@ public class AutoTest extends JFrame {
 			    		testResult.put(Test_Type.GYRO_TEST, 0);
 			    		break;
 			    	}
+					
+					if(!checkGyroXYZSet()) {
+						JOptionPane.showMessageDialog(null, "角度最大值，最小值输入不完整", "角度", JOptionPane.ERROR_MESSAGE);
+						testResult.put(Test_Type.GYRO_TEST, 0);
+			    		break;
+					}
+					
 					gyroFlashCnt = 0;
 					flashqueue.put(Flash_Type.GYRO);
 					
@@ -1299,6 +1631,13 @@ public class AutoTest extends JFrame {
 			    		testResult.put(Test_Type.ACCE_TEST, 0);
 			    		break;
 			    	}
+                	
+                	if(!checkAcceXYZSet()) {
+						JOptionPane.showMessageDialog(null, "加速度最大值，最小值输入不完整", "角度", JOptionPane.ERROR_MESSAGE);
+						testResult.put(Test_Type.ACCE_TEST, 0);
+			    		break;
+					}
+                	
 					flashqueue.put(Flash_Type.ACCE);
 					
                 	if(device.checkAcce()){
@@ -1402,6 +1741,65 @@ public class AutoTest extends JFrame {
 	
     }
     
+    
+    private boolean checkGyroXYZSet() {
+    	if(gyroXMinKey == null || gyroXMinKey.isEmpty() || gyroXMinKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(gyroXMaxKey == null || gyroXMaxKey.isEmpty() || gyroXMaxKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(gyroYMinKey == null || gyroYMinKey.isEmpty() || gyroYMinKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(gyroYMaxKey == null || gyroYMaxKey.isEmpty() || gyroYMaxKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(gyroZMinKey == null || gyroZMinKey.isEmpty() || gyroZMinKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(gyroZMaxKey == null || gyroZMaxKey.isEmpty() || gyroZMaxKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	return true;
+    	
+    }
+    
+    
+    private boolean checkAcceXYZSet() {
+    	if(acceXMinKey == null || acceXMinKey.isEmpty() || acceXMinKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(acceXMaxKey == null || acceXMaxKey.isEmpty() || acceXMaxKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(acceYMinKey == null || acceYMinKey.isEmpty() || acceYMinKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(acceYMaxKey == null || acceYMaxKey.isEmpty() || acceYMaxKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(acceZMinKey == null || acceZMinKey.isEmpty() || acceZMinKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	if(acceZMaxKey == null || acceZMaxKey.isEmpty() || acceZMaxKey.length() == 0) {
+    		return false;
+    	}
+    	
+    	return true;
+    	
+    }
     
     private void updateResultToSqlite() {
     	
@@ -1688,11 +2086,19 @@ public class AutoTest extends JFrame {
 	}
 		
 	public boolean showAccedata() {
-		boolean ret = false;
+		boolean ret = true;
 		String command = "adb shell getevent";
 		int num = 0;
 		//testState = Test_Type.GSENSOR_TEST;
-    	
+    	BigInteger xKey;
+        int xMinKey = Integer.parseInt(acceXMinKey);
+        int xMaxKey = Integer.parseInt(acceXMaxKey);
+        int yMinKey = Integer.parseInt(acceYMinKey);
+        int yMaxKey = Integer.parseInt(acceYMaxKey);
+        int zMinKey = Integer.parseInt(acceZMinKey);
+        int zMaxKey = Integer.parseInt(acceZMaxKey);
+		
+		
     	System.out.println(command);
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -1707,17 +2113,49 @@ public class AutoTest extends JFrame {
     	        	if(line.contains("0003 0000")){
     	        		int startIndex = line.indexOf("0000");
     	        		String content = line.substring(startIndex, line.length());
-    	        		acceTestResult0.setText(content);
+    	        		
+                        String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(xKey.intValue() < xMinKey || xKey.intValue() > xMaxKey) {
+    	        			acceTestResult0.setText(Integer.toString(xKey.intValue()) + "outof range");
+    	        			ret = false;
+    	        			break;
+    	        		} else {
+    	        		    acceTestResult0.setText(content);
+    	        		}
+    	        		
     	        	}
     	        	if(line.contains("0003 0001")){
     	        		int startIndex = line.indexOf("0001");
     	        		String content = line.substring(startIndex, line.length());
-    	        		acceTestResult1.setText(content);
+    	        		String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+                        xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(xKey.intValue() < yMinKey || xKey.intValue() > yMaxKey) {
+    	        			acceTestResult1.setText(Integer.toString(xKey.intValue()) + "outof range");
+    	        			ret = false;
+    	        			break;
+    	        		} else {
+    	        		    acceTestResult1.setText(content);
+    	        		}
     	        	}
     	        	if(line.contains("0003 0002")){
     	        		int startIndex = line.indexOf("0002");
     	        		String content = line.substring(startIndex, line.length());
-    	        		acceTestResult2.setText(content);
+    	        		String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+                        xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(xKey.intValue() < zMinKey || xKey.intValue() > zMaxKey) {
+    	        			acceTestResult2.setText(Integer.toString(xKey.intValue()) + "outof range");
+    	        			ret = false;
+    	        			break;
+    	        		} else {
+    	        		    acceTestResult2.setText(content);
+    	        		}
     	        	}
     	        	num ++;
     	        }

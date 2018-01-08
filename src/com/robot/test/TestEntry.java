@@ -14,6 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 
 
 
@@ -148,6 +149,20 @@ public class TestEntry extends JFrame{
 		setVisible(true);
 		
 		createLogFile();
+		
+		//int rock = 0xffffffea;
+		
+		String rockString = "-2";
+		
+		//BigInteger rock = new BigInteger(rockString, 16);
+	
+		//int rock = Integer.parseInt(rockString, 16);
+	
+		int rock = Integer.parseInt(rockString);
+		
+		System.out.println(rock);
+				
+		
 		
 	}
 			
