@@ -1,1 +1,8 @@
 /bin
+*.local
+*.db
+*.txt
+*.jar
+*.jpg
+*.yuv
+*.bmp
