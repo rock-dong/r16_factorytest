@@ -14,7 +14,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 
 
@@ -150,19 +152,19 @@ public class TestEntry extends JFrame{
 		
 		createLogFile();
 		
+		//TestEntry.writeLog("what is the fuck");
 		//int rock = 0xffffffea;
 		
-		String rockString = "-2";
+		//String rockString = "-2";
 		
 		//BigInteger rock = new BigInteger(rockString, 16);
 	
 		//int rock = Integer.parseInt(rockString, 16);
 	
-		int rock = Integer.parseInt(rockString);
+		//int rock = Integer.parseInt(rockString);
 		
-		System.out.println(rock);
-				
-		
+		//System.out.println(rock);
+					
 		
 	}
 			
@@ -191,19 +193,18 @@ public class TestEntry extends JFrame{
 	
 		
 	public static void writeLog(String str) {
-		
-        
-		
-        long time = System.currentTimeMillis();
-        
+			
+        //long time = System.currentTimeMillis();
+        SimpleDateFormat formatter = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss:SSS");
+        String formatStr =formatter.format(new Date());
             
             try {
             	//in.write(timebt, 0, 8);
                 //in.write(bt, 0, bt.length);  
                 StringBuffer sb = new StringBuffer();
-                sb.append(String.valueOf(time) + " : "  + str + System.getProperty("line.separator"));
+                sb.append( formatStr + " "  + str + System.getProperty("line.separator"));
                 in.write(sb.toString().getBytes("UTF-8"));
-                
+                in.flush();
                 // boolean success=true;  
                 // System.out.println("写入文件成功");  
             } catch (IOException e) {  

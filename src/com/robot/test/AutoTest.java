@@ -8,15 +8,14 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Label;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
@@ -161,19 +160,19 @@ public class AutoTest extends JFrame {
 	boolean gyroLockFlag = false;
 	JButton gyroXYZLockTitle = new JButton("锁定");
 	
-	JTextField gyroXMinValue = new JTextField("-100");
-	JTextField gyroXMaxValue = new JTextField("100");
-	JTextField gyroYMinValue = new JTextField("-150");
-	JTextField gyroYMaxValue = new JTextField("100");
-	JTextField gyroZMinValue = new JTextField("-200");
-	JTextField gyroZMaxValue = new JTextField("250");
+	JTextField gyroXMinValue = new JTextField("-300");
+	JTextField gyroXMaxValue = new JTextField("300");
+	JTextField gyroYMinValue = new JTextField("-350");
+	JTextField gyroYMaxValue = new JTextField("300");
+	JTextField gyroZMinValue = new JTextField("-400");
+	JTextField gyroZMaxValue = new JTextField("500");
 	
-	String gyroXMinKey = "-100";
-	String gyroXMaxKey = "100";
-	String gyroYMinKey = "-150";
-	String gyroYMaxKey = "100";
-	String gyroZMinKey = "-200";
-	String gyroZMaxKey = "250";
+	String gyroXMinKey = "-300";
+	String gyroXMaxKey = "300";
+	String gyroYMinKey = "-350";
+	String gyroYMaxKey = "300";
+	String gyroZMinKey = "-400";
+	String gyroZMaxKey = "500";
 	
 	
 	JButton acceIndication0 = new JButton("");
@@ -195,28 +194,33 @@ public class AutoTest extends JFrame {
 	boolean acceLockFlag = false;
 	JButton acceXYZLockTitle = new JButton("锁定");
 	
-	JTextField acceXMinValue = new JTextField("160");
-	JTextField acceXMaxValue = new JTextField("190");
-	JTextField acceYMinValue = new JTextField("5");
-	JTextField acceYMaxValue = new JTextField("20");
-	JTextField acceZMinValue = new JTextField("960");
-	JTextField acceZMaxValue = new JTextField("1020");
+	JTextField acceXMinValue = new JTextField("60");
+	JTextField acceXMaxValue = new JTextField("290");
+	JTextField acceYMinValue = new JTextField("0");
+	JTextField acceYMaxValue = new JTextField("50");
+	JTextField acceZMinValue = new JTextField("900");
+	JTextField acceZMaxValue = new JTextField("1520");
 	
-	String acceXMinKey = "160";
-	String acceXMaxKey = "190";
-	String acceYMinKey = "5";
-	String acceYMaxKey = "20";
-	String acceZMinKey = "960";
-	String acceZMaxKey = "1020";
+	String acceXMinKey = "60";
+	String acceXMaxKey = "290";
+	String acceYMinKey = "0";
+	String acceYMaxKey = "50";
+	String acceZMinKey = "900";
+	String acceZMaxKey = "1520";
 	
 	
 	JButton uart1Indication0 = new JButton("");
 	JButton uart1Indication1 = new JButton("");
+	JButton uart1Indication2 = new JButton("");
+	JButton uart1Indication3 = new JButton("");
+	JButton uart1Indication4 = new JButton("");
+	
 	
 	JButton uart2Indication0 = new JButton("");
 	JButton uart2Indication1 = new JButton("");
 	JButton uart2Indication2 = new JButton("");
 	JButton uart2Indication3 = new JButton("");
+	JButton uart2Indication4 = new JButton("");
 	
 	private LinkedBlockingQueue<Test_Type> queue = new LinkedBlockingQueue<Test_Type>();
 	private LinkedBlockingQueue<Flash_Type> flashqueue = new LinkedBlockingQueue<Flash_Type>();
@@ -515,6 +519,7 @@ public class AutoTest extends JFrame {
         add(cameraArea);
                 
         cameraArea.setBounds(200, 500, 320, 240);
+        cameraArea.
                
         
         add(chipidInfo);
@@ -890,49 +895,77 @@ public class AutoTest extends JFrame {
         
         
         add(uart1Indication0);
-        uart1Indication0.setBounds(500, 300, 50, 30);
+        uart1Indication0.setBounds(500, 300, 20, 30);
         uart1Indication0.setBackground(Color.blue);
         uart1Indication0.setBorderPainted(false);
         uart1Indication0.setFocusPainted(false);
         uart1Indication0.setEnabled(false);
         uart1Indication0.setVisible(false);
         add(uart1Indication1);
-        uart1Indication1.setBounds(550, 300, 50, 30);
+        uart1Indication1.setBounds(520, 300, 20, 30);
         uart1Indication1.setBackground(Color.blue);
         uart1Indication1.setBorderPainted(false);
         uart1Indication1.setFocusPainted(false);
         uart1Indication1.setEnabled(false);
         uart1Indication1.setVisible(false);
+        add(uart1Indication2);
+        uart1Indication2.setBounds(540, 300, 20, 30);
+        uart1Indication2.setBackground(Color.blue);
+        uart1Indication2.setBorderPainted(false);
+        uart1Indication2.setFocusPainted(false);
+        uart1Indication2.setEnabled(false);
+        uart1Indication2.setVisible(false);
+        add(uart1Indication3);
+        uart1Indication3.setBounds(560, 300, 20, 30);
+        uart1Indication3.setBackground(Color.blue);
+        uart1Indication3.setBorderPainted(false);
+        uart1Indication3.setFocusPainted(false);
+        uart1Indication3.setEnabled(false);
+        uart1Indication3.setVisible(false);
+        add(uart1Indication4);
+        uart1Indication4.setBounds(580, 300, 20, 30);
+        uart1Indication4.setBackground(Color.blue);
+        uart1Indication4.setBorderPainted(false);
+        uart1Indication4.setFocusPainted(false);
+        uart1Indication4.setEnabled(false);
+        uart1Indication4.setVisible(false);
         
         
         add(uart2Indication0);
-        uart2Indication0.setBounds(600, 300, 25, 30);
+        uart2Indication0.setBounds(600, 300, 20, 30);
         uart2Indication0.setBackground(Color.blue);
         uart2Indication0.setBorderPainted(false);
         uart2Indication0.setFocusPainted(false);
         uart2Indication0.setEnabled(false);
         uart2Indication0.setVisible(false);
         add(uart2Indication1);
-        uart2Indication1.setBounds(625, 300, 25, 30);
+        uart2Indication1.setBounds(620, 300, 20, 30);
         uart2Indication1.setBackground(Color.blue);
         uart2Indication1.setBorderPainted(false);
         uart2Indication1.setFocusPainted(false);
         uart2Indication1.setEnabled(false);
         uart2Indication1.setVisible(false);
         add(uart2Indication2);
-        uart2Indication2.setBounds(650, 300, 25, 30);
+        uart2Indication2.setBounds(640, 300, 20, 30);
         uart2Indication2.setBackground(Color.blue);
         uart2Indication2.setBorderPainted(false);
         uart2Indication2.setFocusPainted(false);
         uart2Indication2.setEnabled(false);
         uart2Indication2.setVisible(false);
         add(uart2Indication3);
-        uart2Indication3.setBounds(675, 300, 25, 30);
+        uart2Indication3.setBounds(660, 300, 20, 30);
         uart2Indication3.setBackground(Color.blue);
         uart2Indication3.setBorderPainted(false);
         uart2Indication3.setFocusPainted(false);
         uart2Indication3.setEnabled(false);
         uart2Indication3.setVisible(false);
+        add(uart2Indication4);
+        uart2Indication4.setBounds(680, 300, 20, 30);
+        uart2Indication4.setBackground(Color.blue);
+        uart2Indication4.setBorderPainted(false);
+        uart2Indication4.setFocusPainted(false);
+        uart2Indication4.setEnabled(false);
+        uart2Indication4.setVisible(false);
         
         
         testThread  tTh = new testThread();
@@ -1300,9 +1333,16 @@ public class AutoTest extends JFrame {
     private void displayUart1Test() {
     	uart1Indication0.setVisible(true);
     	uart1Indication1.setVisible(true);
+    	uart1Indication2.setVisible(true);
+    	uart1Indication3.setVisible(true);
+    	uart1Indication4.setVisible(true);
     	
     	uart1Indication0.setBackground(Color.blue);
-    	uart1Indication1.setBackground(Color.blue);		
+    	uart1Indication1.setBackground(Color.blue);
+    	uart1Indication2.setBackground(Color.blue);
+    	uart1Indication3.setBackground(Color.blue);
+    	uart1Indication4.setBackground(Color.blue);
+    	
     }
     
     private void displayUart2Test() {
@@ -1310,11 +1350,13 @@ public class AutoTest extends JFrame {
     	uart2Indication1.setVisible(true);
     	uart2Indication2.setVisible(true);
     	uart2Indication3.setVisible(true);
+    	uart2Indication4.setVisible(true);
     	
     	uart2Indication0.setBackground(Color.blue);
     	uart2Indication1.setBackground(Color.blue);
     	uart2Indication2.setBackground(Color.blue);
     	uart2Indication3.setBackground(Color.blue);
+    	uart2Indication4.setBackground(Color.blue);
     }
     
     void gyroClear() {
@@ -1331,7 +1373,11 @@ public class AutoTest extends JFrame {
     
     void uart1Clear() {
     	uart1Indication0.setVisible(false);
-    	uart1Indication1.setVisible(false);	 		
+    	uart1Indication1.setVisible(false);
+    	uart1Indication2.setVisible(false);
+    	uart1Indication3.setVisible(false);
+    	uart1Indication4.setVisible(false);
+    	
     }
     
     void uart2Clear() {
@@ -1339,6 +1385,7 @@ public class AutoTest extends JFrame {
     	uart2Indication1.setVisible(false);
     	uart2Indication2.setVisible(false);
     	uart2Indication3.setVisible(false);
+    	uart2Indication4.setVisible(false);
     }
     
     private void displayAcceTest() {
@@ -1380,10 +1427,12 @@ public class AutoTest extends JFrame {
 		    delete(file);
 		}
 		
+		
 		file = new File(TestEntry.jarPath + "\\nv21.bmp");
 		if (file.exists()){
 		    delete(file);
 		}
+		
 		
 		file = new File(TestEntry.jarPath + "\\javalog.txt");
 		if (file.exists()){
@@ -1605,9 +1654,9 @@ public class AutoTest extends JFrame {
 					
 					if(device.checkGyro()){
 			    	    device.controlGyro(true);
-			    	    showGyrodata();
+			    	    gyroret = showGyrodata();
 			    	    device.controlGyro(false);
-			    	    gyroret = true;
+			    	    
 			    	}else {
 			    		gyroTestResult0.setText("驱动未找到");
 			    	}
@@ -1642,9 +1691,9 @@ public class AutoTest extends JFrame {
 					
                 	if(device.checkAcce()){
 			    	    device.controlAcce(true);
-			    	    showAccedata();
+			    	    acceret = showAccedata();
 			    	    device.controlAcce(false);
-			    	    acceret = true;
+			    	    
 			    	}else {
 			    		acceTestResult0.setText("驱动未找到");
 			    	}
@@ -1718,7 +1767,7 @@ public class AutoTest extends JFrame {
 					
 					checkAudioCameraResult();
 					printTestResult();
-					updateResultToSqlite();
+					processResult();
 					autoTestInfo.setText("结束");
                     autoTestBt.setEnabled(true);
 					autoTestBt.setBackground(Color.green);
@@ -1801,14 +1850,14 @@ public class AutoTest extends JFrame {
     	
     }
     
-    private void updateResultToSqlite() {
+    private void processResult() {
     	
     	int globalResult = 0;
     	java.util.Date utilDate = new Date();
     	int oknum = 0;
     	//Iterator<Map.Entry<Test_Type, Integer>> iter = testResult.entrySet().iterator();
     	
-   	    System.out.println("updateResultToSqlite ...");
+   	    System.out.println("processResult ...");
    	    if (testResult.size() == 6){
    	    	System.out.println("result number is right 6");
    	    } else {
@@ -1894,16 +1943,22 @@ public class AutoTest extends JFrame {
    	    record.SetResult(globalResult);
    	    
    	    
-   	    FactoryRecord oldrecord = database.Read(barcode);
+   	    if(barcode == null || barcode.isEmpty()) {
+    	    System.out.println("no barcode, do not visit sql" );
+   	    }else {
+   	        FactoryRecord oldrecord = database.Read(barcode);
    	    
-   	    if (oldrecord == null) {
-   	    	System.out.println("no record write" );
-   	        database.Write(record);
-   	    } else {
-   	    	System.out.println("has record " + oldrecord.GetBar() + "  update");
-   	    	database.Update(record);
+   	        if (oldrecord == null) {
+   	    	    System.out.println("no record write" );
+   	            database.Write(record);
+   	        } else {
+   	    	    System.out.println("has record " + oldrecord.GetBar() + "  update");
+   	    	    database.Update(record);
+   	        }
    	    }
-    	
+   	 
+   	    TestEntry.writeLog("auto test result " + globalResult);
+   	    
    	    if (globalResult == 1) {
    	    	passNum++;
    	    	passNumberTitle.setText(Integer.toString(passNum));
@@ -1983,6 +2038,7 @@ public class AutoTest extends JFrame {
     
     public boolean convertYuvToBmp() {
 		TestEntry.writeLog("covertYuvToBmp +++");
+
 		File file = new File(TestEntry.jarPath + "\\source_data1.yuv"); // The input NV21 file
 		if (!file.exists()){
 			TestEntry.writeLog("covertYuvToBmp not found---");
@@ -2010,7 +2066,7 @@ public class AutoTest extends JFrame {
 			return false;
 		}
 
-		TestEntry.writeLog("covertYuvToBmp  is done");
+		TestEntry.writeLog("conversion is done");
 		
 		System.out.println("Conversion is done.");
 		return true;
@@ -2037,11 +2093,23 @@ public class AutoTest extends JFrame {
     }
     
     public boolean showGyrodata() {
-		boolean ret = false;
+		boolean ret = true;
 		String command = "adb shell getevent";
 		int num = 0;
 		//testState = Test_Type.GSENSOR_TEST;
     	
+		BigInteger xKey;
+        int xMinKey = Integer.parseInt(gyroXMinKey);
+        int xMaxKey = Integer.parseInt(gyroXMaxKey);
+        int yMinKey = Integer.parseInt(gyroYMinKey);
+        int yMaxKey = Integer.parseInt(gyroYMaxKey);
+        int zMinKey = Integer.parseInt(gyroZMinKey);
+        int zMaxKey = Integer.parseInt(gyroZMaxKey);
+        
+        gyroTestResult0.setForeground(Color.black);
+        gyroTestResult1.setForeground(Color.black);
+        gyroTestResult2.setForeground(Color.black);
+        
     	System.out.println(command);
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -2056,17 +2124,50 @@ public class AutoTest extends JFrame {
     	        	if(line.contains("0003 0000")){
     	        		int startIndex = line.indexOf("0000");
     	        		String content = line.substring(startIndex, line.length());
-    	        		gyroTestResult0.setText(content);
+                        String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+    	        		xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(xKey.intValue() < xMinKey || xKey.intValue() > xMaxKey) {
+    	        			gyroTestResult0.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			gyroTestResult0.setForeground(Color.red);
+    	        			ret = false;
+    	        			break;
+    	        		} else {
+    	        		    gyroTestResult0.setText(content);
+    	        		}
     	        	}
     	        	if(line.contains("0003 0001")){
     	        		int startIndex = line.indexOf("0001");
     	        		String content = line.substring(startIndex, line.length());
-    	        		gyroTestResult1.setText(content);
+                        String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+                        xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(xKey.intValue() < yMinKey || xKey.intValue() > yMaxKey) {
+    	        			gyroTestResult1.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			gyroTestResult1.setForeground(Color.red);
+    	        			ret = false;
+    	        			break;
+    	        		} else {
+    	        		    gyroTestResult1.setText(content);
+    	        		}
     	        	}
     	        	if(line.contains("0003 0002")){
     	        		int startIndex = line.indexOf("0002");
     	        		String content = line.substring(startIndex, line.length());
-    	        		gyroTestResult2.setText(content);
+                        String keyValue = line.substring(startIndex+4, line.length()).trim();
+    	        		
+                        xKey = new BigInteger(keyValue, 16);
+    	        		
+    	        		if(xKey.intValue() < zMinKey || xKey.intValue() > zMaxKey) {
+    	        			gyroTestResult2.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			gyroTestResult2.setForeground(Color.red);
+    	        			ret = false;
+    	        			break;
+    	        		} else {
+    	        		    gyroTestResult2.setText(content);
+    	        		}
     	        	}
     	        	num ++;
     	        }
@@ -2099,6 +2200,10 @@ public class AutoTest extends JFrame {
         int zMaxKey = Integer.parseInt(acceZMaxKey);
 		
 		
+        acceTestResult0.setForeground(Color.black);
+        acceTestResult1.setForeground(Color.black);
+        acceTestResult2.setForeground(Color.black);
+        
     	System.out.println(command);
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -2119,7 +2224,8 @@ public class AutoTest extends JFrame {
     	        		xKey = new BigInteger(keyValue, 16);
     	        		
     	        		if(xKey.intValue() < xMinKey || xKey.intValue() > xMaxKey) {
-    	        			acceTestResult0.setText(Integer.toString(xKey.intValue()) + "outof range");
+    	        			acceTestResult0.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			acceTestResult0.setForeground(Color.blue);
     	        			ret = false;
     	        			break;
     	        		} else {
@@ -2135,7 +2241,8 @@ public class AutoTest extends JFrame {
                         xKey = new BigInteger(keyValue, 16);
     	        		
     	        		if(xKey.intValue() < yMinKey || xKey.intValue() > yMaxKey) {
-    	        			acceTestResult1.setText(Integer.toString(xKey.intValue()) + "outof range");
+    	        			acceTestResult1.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			acceTestResult1.setForeground(Color.blue);
     	        			ret = false;
     	        			break;
     	        		} else {
@@ -2150,7 +2257,8 @@ public class AutoTest extends JFrame {
                         xKey = new BigInteger(keyValue, 16);
     	        		
     	        		if(xKey.intValue() < zMinKey || xKey.intValue() > zMaxKey) {
-    	        			acceTestResult2.setText(Integer.toString(xKey.intValue()) + "outof range");
+    	        			acceTestResult2.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			acceTestResult2.setForeground(Color.blue);
     	        			ret = false;
     	        			break;
     	        		} else {
@@ -2284,9 +2392,9 @@ public class AutoTest extends JFrame {
 				    }
 				    
 				    case UART1 : {
-				    	uart1Flash(uart1FlashCnt%2);
+				    	uart1Flash(uart1FlashCnt%5);
 				    	try {
-				    		Thread.sleep(1000);				    		
+				    		Thread.sleep(900);				    		
 				    	} catch (InterruptedException e) {
 				    		e.printStackTrace();
 				    	}
@@ -2296,6 +2404,7 @@ public class AutoTest extends JFrame {
 				    }
 				    
 				    case UART1_END_OK : {
+				    	uart1Flash(4);
 				    	flashqueue.removeIf(value -> value==Flash_Type.UART1);
 				    	break;
 				    }
@@ -2307,9 +2416,9 @@ public class AutoTest extends JFrame {
 				    }
 				    
 				    case UART2 : {
-				    	uart2Flash(uart2FlashCnt%4);
+				    	uart2Flash(uart2FlashCnt%5);
 				    	try {
-				    		Thread.sleep(600);				    		
+				    		Thread.sleep(900);				    		
 				    	} catch (InterruptedException e) {
 				    		e.printStackTrace();
 				    	}
@@ -2319,7 +2428,7 @@ public class AutoTest extends JFrame {
 				    }
 				    
 				    case UART2_END_OK : {
-				    	
+				    	uart2Flash(4);
 				    	flashqueue.removeIf(value -> value==Flash_Type.UART2);
 				    	break;
 				    }
@@ -2518,6 +2627,15 @@ public class AutoTest extends JFrame {
     	case 1:
     		uart1Indication1.setBackground(Color.green);
     		break;
+    	case 2:
+    		uart1Indication2.setBackground(Color.green);
+    		break;
+    	case 3:
+    		uart1Indication3.setBackground(Color.green);
+    		break;
+    	case 4:
+    		uart1Indication4.setBackground(Color.green);
+    		break;
     	
     	}
 	}
@@ -2525,6 +2643,9 @@ public class AutoTest extends JFrame {
     void uart1Fail() {
     	uart1Indication0.setBackground(Color.red);
     	uart1Indication1.setBackground(Color.red);
+    	uart1Indication2.setBackground(Color.red);
+    	uart1Indication3.setBackground(Color.red);
+    	uart1Indication4.setBackground(Color.red);
     }
     
     void uart2Flash(int num) {
@@ -2541,6 +2662,9 @@ public class AutoTest extends JFrame {
     	case 3:
     		uart2Indication3.setBackground(Color.green);
     		break;
+    	case 4:
+    		uart2Indication4.setBackground(Color.green);
+    		break;
     	}
 	}
     
@@ -2549,6 +2673,7 @@ public class AutoTest extends JFrame {
     	uart2Indication1.setBackground(Color.red);
     	uart2Indication2.setBackground(Color.red);
     	uart2Indication3.setBackground(Color.red);
+    	uart2Indication4.setBackground(Color.red);
     }
     
     public void close() {

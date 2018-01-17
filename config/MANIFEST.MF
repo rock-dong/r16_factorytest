@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
 Main-Class: com.robot.test.TestEntry
+Class-Path: . libs/sqlite-jdbc-3.21.0.jar
 Created-By: Rock

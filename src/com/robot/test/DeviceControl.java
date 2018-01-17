@@ -286,10 +286,8 @@ public class DeviceControl {
 	
 	public boolean startCameraCapture() {
     	boolean ret = false;
-		String command = "adb shell cameratest 640 480 photo 1 /tmp NV21 ";
-    	
-    	
-    	    	
+		String command = "adb shell cameratest 640 480 photo 1 /tmp NV21";
+    	    	    	    	
     	System.out.println(command);
     	
     	TestEntry.writeLog("startCameraCapture ....");
@@ -302,13 +300,16 @@ public class DeviceControl {
     	   
     	    while(line != null) {
     	        System.out.println(line);  
+    	        /*
     	        if (line.endsWith("finish!")){
     	        	ret = true;   
     	        	TestEntry.writeLog("cameratest cmd ok");
     	        	break;
     	        } 
+    	        */
     	        line = bufferedReader.readLine();
     	    }
+    	    ret = true;
     	    System.out.println("adb print end");
     	    process.destroy();
     	        	    
@@ -332,8 +333,8 @@ public class DeviceControl {
     		return ret;
     	}
     	
-    	//ret = false;
-    	TestEntry.writeLog("ignore adb result check");
+    	ret = false;
+    	//TestEntry.writeLog(" adb result check");
     	
     	command = "adb pull /tmp/source_data1.yuv " + TestEntry.jarPath;
     	System.out.println(command);
@@ -346,13 +347,17 @@ public class DeviceControl {
     	   
     	    while(line != null) {
     	        System.out.println(line);  
-    	        if (line.endsWith("s)")){  	
+    	        
+    	        if (line.contains("100%")){  	
     	        	ret = true;
-    	        	//writeLog("adb pull yuv ok");
-    	        	break;
-    	        } 
+    	        	TestEntry.writeLog("adb pull yuv ok");
+    	        	//break;
+    	        }
+    	        
     	        line = bufferedReader.readLine();
+    	        //ret = true;
     	    }
+    	    
     	    System.out.println("adb print end");
     	    process.destroy();
     	        	    
@@ -499,7 +504,7 @@ public class DeviceControl {
 	
 	public boolean uart1test() {
 		boolean ret = false;
-		String command = "adb shell mincomtest";
+		String command = "adb shell mincomtest 2 115200 2 100";
 		
     	
     	System.out.println(command);
@@ -511,11 +516,11 @@ public class DeviceControl {
     	   
     	    while(line != null) {
     	        System.out.println(line);  
-    	        if (line.contains("uart 1 test success")){
+    	        if (line.contains("test success")){
     	        	System.out.println("uart 1 test pass");
     	        	ret = true;    	        	                    	        	
     	        	break;
-    	        } else if (line.contains("uart 1 test fail")) {
+    	        } else if (line.contains("test fail")) {
     	        	System.out.println("uart 1 test fail");
     	        	ret = false;    	        	                    	        	
     	        	break;
@@ -537,7 +542,7 @@ public class DeviceControl {
 	
 	public boolean uart2test() {
 		boolean ret = false;
-		String command = "adb shell mincomtest";
+		String command = "adb shell mincomtest 2 115200 3 100 ";
 		
     	
     	System.out.println(command);
@@ -549,11 +554,11 @@ public class DeviceControl {
     	   
     	    while(line != null) {
     	        System.out.println(line);  
-    	        if (line.contains("uart 2 test success")){
-    	        	System.out.println("uart 1 test pass");
+    	        if (line.contains("test success")){
+    	        	System.out.println("uart 2 test pass");
     	        	ret = true;    	        	                    	        	
     	        	break;
-    	        } else if (line.contains("uart 2 test fail")) {
+    	        } else if (line.contains("test fail")) {
     	        	System.out.println("uart 2 test fail");
     	        	ret = false;    	        	                    	        	
     	        	break;
@@ -577,7 +582,7 @@ public class DeviceControl {
 	public boolean ledPassFlash() {
 		boolean ret = false;
 		String command = "adb shell \"echo 5000 > /sys/class/leds/led1/interval\"";
-		
+		TestEntry.writeLog("ledpassflash");
     	
     	System.out.println(command);
     	try {
@@ -590,6 +595,7 @@ public class DeviceControl {
     	        System.out.println(line);  
 
     	        line = bufferedReader.readLine();
+    	        ret = true;
     	    }
     	    System.out.println("adb print end");
     	    process.destroy();
@@ -599,13 +605,19 @@ public class DeviceControl {
     	    e.printStackTrace();
     	}
     	
+    	if(ret == false){
+    		return ret;
+    	}
+    	
+    	ret = false;
+    	
     	File localOkfile = new File(TestEntry.jarPath + "\\ok.local");
     	
-    	command = "adb push ok.local /etc/rc.local";
+    	command = "adb push " + TestEntry.jarPath + "\\ok.local /etc/rc.local";
     	
     	if(localOkfile.exists()) {
     		System.out.println("ok.local is exist");
-    		
+    		TestEntry.writeLog("ok.local exist");
     		System.out.println(command);
         	try {
         	    Process process = Runtime.getRuntime().exec(command);
@@ -614,8 +626,11 @@ public class DeviceControl {
         	    String line = bufferedReader.readLine();
         	   
         	    while(line != null) {
-        	        System.out.println(line);  
-
+        	        System.out.println(line);
+        	        if(line.contains("100%")){
+        	        	ret = true;
+        	        }
+                    TestEntry.writeLog(line);
         	        line = bufferedReader.readLine();
         	    }
         	    System.out.println("adb print end");
@@ -628,6 +643,7 @@ public class DeviceControl {
     		
     	} else {
     		System.out.println("ok.local not exist, can not push");
+    		TestEntry.writeLog("no ok.local");
     	}
     	
     	return ret;
@@ -637,7 +653,8 @@ public class DeviceControl {
     	boolean ret = false;
 		String command = "adb shell \"echo 200 > /sys/class/leds/led1/interval\"";;
 		
-    	
+		TestEntry.writeLog("ledfailflash");
+		
     	System.out.println(command);
     	try {
     	    Process process = Runtime.getRuntime().exec(command);
@@ -660,11 +677,11 @@ public class DeviceControl {
     	
         File localOkfile = new File(TestEntry.jarPath + "\\fail.local");
     	
-    	command = "adb push fail.local /etc/rc.local";
+    	command = "adb push " + TestEntry.jarPath + "\\fail.local /etc/rc.local";
     	
     	if(localOkfile.exists()) {
     		System.out.println("fail.local is exist");
-    		
+    		TestEntry.writeLog("fail.local exist");
     		System.out.println(command);
         	try {
         	    Process process = Runtime.getRuntime().exec(command);
@@ -674,7 +691,7 @@ public class DeviceControl {
         	   
         	    while(line != null) {
         	        System.out.println(line);  
-
+                    TestEntry.writeLog(line);
         	        line = bufferedReader.readLine();
         	    }
         	    System.out.println("adb print end");
@@ -686,6 +703,7 @@ public class DeviceControl {
         	}
     		
     	} else {
+    		TestEntry.writeLog("fail.local not ");
     		System.out.println("fail.local not exist, can not push");
     	}
     	
