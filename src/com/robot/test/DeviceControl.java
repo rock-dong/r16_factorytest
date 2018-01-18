@@ -27,6 +27,7 @@ public class DeviceControl {
     	    String line = bufferedReader.readLine();
     	    while(line != null) {
     	        System.out.println(line);
+    	        TestEntry.writeLog(line);
     	        if(line.endsWith("device")){
     	            deviceName = line.substring(0, line.length() - "device".length()).trim();
     	            break;
@@ -54,6 +55,7 @@ public class DeviceControl {
     	    String line = bufferedReader.readLine();
     	    while(line != null) {
     	        System.out.println(line);  
+    	        TestEntry.writeLog(line);
     	        if (line.contains("sunxi_chipid")){
     	        	int startIndex = line.indexOf(":");
     	        	
@@ -263,7 +265,8 @@ public class DeviceControl {
     	    String line = bufferedReader.readLine();
     	   
     	    while(line != null) {
-    	        System.out.println(line);  
+    	        System.out.println(line); 
+    	        TestEntry.writeLog(line);
     	        if (line.contains("video0")){
     	        	System.out.println("find camera driver");
     	        	TestEntry.writeLog("find camera driver");
@@ -334,7 +337,7 @@ public class DeviceControl {
     	}
     	
     	ret = false;
-    	//TestEntry.writeLog(" adb result check");
+    	//TestEntry.writeLog(" adb pull");
     	
     	command = "adb pull /tmp/source_data1.yuv " + TestEntry.jarPath;
     	System.out.println(command);
@@ -347,7 +350,7 @@ public class DeviceControl {
     	   
     	    while(line != null) {
     	        System.out.println(line);  
-    	        
+    	        TestEntry.writeLog(line);
     	        if (line.contains("100%")){  	
     	        	ret = true;
     	        	TestEntry.writeLog("adb pull yuv ok");
@@ -518,10 +521,12 @@ public class DeviceControl {
     	        System.out.println(line);  
     	        if (line.contains("test success")){
     	        	System.out.println("uart 1 test pass");
+    	        	TestEntry.writeLog("uart 1 test pass");
     	        	ret = true;    	        	                    	        	
     	        	break;
     	        } else if (line.contains("test fail")) {
     	        	System.out.println("uart 1 test fail");
+    	        	TestEntry.writeLog("uart 1 test fail");
     	        	ret = false;    	        	                    	        	
     	        	break;
     	        }
@@ -556,10 +561,12 @@ public class DeviceControl {
     	        System.out.println(line);  
     	        if (line.contains("test success")){
     	        	System.out.println("uart 2 test pass");
+    	        	TestEntry.writeLog("uart 2 test pass");
     	        	ret = true;    	        	                    	        	
     	        	break;
     	        } else if (line.contains("test fail")) {
     	        	System.out.println("uart 2 test fail");
+    	        	TestEntry.writeLog("uart 2 test fail");
     	        	ret = false;    	        	                    	        	
     	        	break;
     	        }

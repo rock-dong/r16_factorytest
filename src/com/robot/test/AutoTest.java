@@ -251,16 +251,11 @@ public class AutoTest extends JFrame {
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 		System.out.println("autotest enter ..");
-		
+		TestEntry.writeLog("autotest enter ..");
 		
 		loadRecordThread  tThSql = new loadRecordThread();
 		Thread thread3 = new Thread(tThSql);
 		thread3.start();
-		
-		
-		
-		
-		
 		
 		testItem.add(Test_Type.USB_TEST);
 		CbItemListener cbi = new CbItemListener();
@@ -350,7 +345,7 @@ public class AutoTest extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				System.out.println("auto test start");
-				
+				TestEntry.writeLog("auto test start");
 				popBarcodeIndication();
 				loadSelectedItem();
 				
@@ -1042,11 +1037,13 @@ public class AutoTest extends JFrame {
 					} else {
 						testItem.add(Test_Type.AUDIO_TEST);
 						System.out.println(audioCBName + " select");
+						TestEntry.writeLog(audioCBName + " select");
 					}
 				} else {
 					if (testItem.contains(Test_Type.AUDIO_TEST)){
 						testItem.remove(Test_Type.AUDIO_TEST);
 						System.out.println(audioCBName + " skip");
+						TestEntry.writeLog(audioCBName + " skip");
 					} else {
 						System.out.println("already has audo test, why?");
 					}
@@ -1061,11 +1058,13 @@ public class AutoTest extends JFrame {
 					} else {
 						testItem.add(Test_Type.CAMERA_TEST);
 						System.out.println("camera test select");
+						TestEntry.writeLog("camera test select");
 					}
 				} else {
 					if (testItem.contains(Test_Type.CAMERA_TEST)){
 						testItem.remove(Test_Type.CAMERA_TEST);
 						System.out.println("camera test skip");
+						TestEntry.writeLog("camera test skip");
 					} else {
 						System.out.println("no camera test, why delele?");
 					}
@@ -1080,11 +1079,13 @@ public class AutoTest extends JFrame {
 					} else {
 						testItem.add(Test_Type.GYRO_TEST);
 						System.out.println("gyro test select");
+						TestEntry.writeLog("gyro test select");
 					}
 				} else {
 					if (testItem.contains(Test_Type.GYRO_TEST)){
 						testItem.remove(Test_Type.GYRO_TEST);
 						System.out.println("gyro test skip");
+						TestEntry.writeLog("gyro test skip");
 					} else {
 						System.out.println("no gyro test, why delete?");
 					}
@@ -1100,11 +1101,13 @@ public class AutoTest extends JFrame {
 					} else {
 						testItem.add(Test_Type.ACCE_TEST);
 						System.out.println("acce test select");
+						TestEntry.writeLog("acce test select");
 					}
 				} else {
 					if (testItem.contains(Test_Type.ACCE_TEST)){
 						testItem.remove(Test_Type.ACCE_TEST);
 						System.out.println("acce test skip");
+						TestEntry.writeLog("acce test skip");
 					} else {
 						System.out.println("already has acce test, why?");
 					}
@@ -1119,11 +1122,13 @@ public class AutoTest extends JFrame {
 					} else {
 						testItem.add(Test_Type.UART1_TEST);
 						System.out.println("uart1 test select");
+						TestEntry.writeLog("uart1 test select");
 					}
 				} else {
 					if (testItem.contains(Test_Type.UART1_TEST)){
 						testItem.remove(Test_Type.UART1_TEST);
 						System.out.println("uart1 test skip");
+						TestEntry.writeLog("uart1 test skip");
 					} else {
 						System.out.println("no uart1 test, why delete?");
 					}
@@ -1139,11 +1144,13 @@ public class AutoTest extends JFrame {
 					} else {
 						testItem.add(Test_Type.UART2_TEST);
 						System.out.println("uart2 test select");
+						TestEntry.writeLog("uart2 test select");
 					}
 				} else {
 					if (testItem.contains(Test_Type.UART2_TEST)){
 						testItem.remove(Test_Type.UART2_TEST);
 						System.out.println("uart2 test skip");
+						TestEntry.writeLog("uart2 test skip");
 					} else {
 						System.out.println("no uart2 test, why delete?");
 					}
@@ -1165,7 +1172,14 @@ public class AutoTest extends JFrame {
     	String str = JOptionPane.showInputDialog("请输入条形码数字");
     	System.out.println(str);
     	barcodeInfo.setText("条形码       :  " + str);
+    	
     	barcode = str;
+    	if(str.isEmpty() || str == null){
+    		TestEntry.writeLog("invalid input barcode");
+    	} else {
+    		TestEntry.writeLog("barcode :" + str);
+    	}
+    	
     }
     
     
@@ -1508,15 +1522,14 @@ public class AutoTest extends JFrame {
 				Test_Type cmd  = queue.take();
 				
 				System.out.println("testThead receive :" + cmd);
-				
+				TestEntry.writeLog("test thread receive : " + cmd);
 				switch(cmd) {
 				    case USB_TEST :{
 
 						autoTestBt.setEnabled(false);
 						autoTestInfo.setText("正在检测环境....");
 						autoTestBt.setBackground(Color.gray);
-						
-						
+									
 						
 						String deviceList = device.getAdbDevices();
 						if(deviceList == null || deviceList.isEmpty() ){
@@ -1662,9 +1675,11 @@ public class AutoTest extends JFrame {
 			    	}
 					
 					if (gyroret) {
+						TestEntry.writeLog("gyro pass");
 						flashqueue.put(Flash_Type.GYRO_END_OK);
 					    testResult.put(Test_Type.GYRO_TEST, 1);
 					} else {
+						TestEntry.writeLog("gyro fail");
 						flashqueue.put(Flash_Type.GYRO_END_FAIL);
 					    testResult.put(Test_Type.GYRO_TEST, 0);
 					}
@@ -1699,9 +1714,11 @@ public class AutoTest extends JFrame {
 			    	}
                 	
                 	if (acceret) {
+                		TestEntry.writeLog("acce pass");
 						flashqueue.put(Flash_Type.ACCE_END_OK);
 					    testResult.put(Test_Type.ACCE_TEST, 1);
 					} else {
+						TestEntry.writeLog("acce fail");
 						flashqueue.put(Flash_Type.ACCE_END_FAIL);
 					    testResult.put(Test_Type.ACCE_TEST, 0);
 					}
@@ -2130,6 +2147,7 @@ public class AutoTest extends JFrame {
     	        		
     	        		if(xKey.intValue() < xMinKey || xKey.intValue() > xMaxKey) {
     	        			gyroTestResult0.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			TestEntry.writeLog("gyro x" + Integer.toString(xKey.intValue()) + " 出界");
     	        			gyroTestResult0.setForeground(Color.red);
     	        			ret = false;
     	        			break;
@@ -2146,6 +2164,7 @@ public class AutoTest extends JFrame {
     	        		
     	        		if(xKey.intValue() < yMinKey || xKey.intValue() > yMaxKey) {
     	        			gyroTestResult1.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			TestEntry.writeLog("gyro y" + Integer.toString(xKey.intValue()) + " 出界");
     	        			gyroTestResult1.setForeground(Color.red);
     	        			ret = false;
     	        			break;
@@ -2162,6 +2181,7 @@ public class AutoTest extends JFrame {
     	        		
     	        		if(xKey.intValue() < zMinKey || xKey.intValue() > zMaxKey) {
     	        			gyroTestResult2.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			TestEntry.writeLog("gyro z" + Integer.toString(xKey.intValue()) + " 出界");
     	        			gyroTestResult2.setForeground(Color.red);
     	        			ret = false;
     	        			break;
@@ -2225,6 +2245,7 @@ public class AutoTest extends JFrame {
     	        		
     	        		if(xKey.intValue() < xMinKey || xKey.intValue() > xMaxKey) {
     	        			acceTestResult0.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			TestEntry.writeLog("acce x " + Integer.toString(xKey.intValue()) + " 出界");
     	        			acceTestResult0.setForeground(Color.blue);
     	        			ret = false;
     	        			break;
@@ -2242,6 +2263,7 @@ public class AutoTest extends JFrame {
     	        		
     	        		if(xKey.intValue() < yMinKey || xKey.intValue() > yMaxKey) {
     	        			acceTestResult1.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			TestEntry.writeLog("acce y " + Integer.toString(xKey.intValue()) + " 出界");
     	        			acceTestResult1.setForeground(Color.blue);
     	        			ret = false;
     	        			break;
@@ -2258,6 +2280,7 @@ public class AutoTest extends JFrame {
     	        		
     	        		if(xKey.intValue() < zMinKey || xKey.intValue() > zMaxKey) {
     	        			acceTestResult2.setText(Integer.toString(xKey.intValue()) + " 出界");
+    	        			TestEntry.writeLog("acce z " + Integer.toString(xKey.intValue()) + " 出界");
     	        			acceTestResult2.setForeground(Color.blue);
     	        			ret = false;
     	        			break;
