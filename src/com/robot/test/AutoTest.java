@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.file.Files;
-import java.text.SimpleDateFormat;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +30,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,13 +38,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import jxl.Workbook;
-import jxl.write.DateTime;
+
 import jxl.write.Label;
 import jxl.write.WritableCellFormat;
 import jxl.write.WritableSheet;
@@ -252,6 +254,9 @@ public class AutoTest extends JFrame {
 	List<FactoryRecord> failRecord;
 	int passNum = 0;
 	int failNum = 0;
+	
+	File excelFile;
+	
     public AutoTest() {
     	setSize(700, 700);
 		setLocation(300, 300);
@@ -2533,7 +2538,7 @@ public class AutoTest extends JFrame {
 			autoTestBt.setEnabled(false);
 			if(askUserDoSqlToExcel()){
 				
-				sqlToExcelWork();
+				//sqlToExcelWork();
 				
 				
 			}
@@ -2542,13 +2547,30 @@ public class AutoTest extends JFrame {
 	}
     
     boolean askUserDoSqlToExcel() {
-    	int ret = JOptionPane.showConfirmDialog(this, "是否转换成Excel表格？", "数据库操作", JOptionPane.INFORMATION_MESSAGE);
-	    System.out.println(" sql 转换  " + ret);
-	    if (ret == 0) {
-	    	return true;
-	    } else {
-	    	return false;
-	    } 	    
+    	
+    	JFileChooser chooser = new JFileChooser();  
+        
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("excel表格(*.xls)", "xls");  
+        chooser.setFileFilter(filter);  
+          
+        int option = chooser.showSaveDialog(null);  
+        if(option==JFileChooser.APPROVE_OPTION){
+            File file = chooser.getSelectedFile();  
+              
+            String fname = chooser.getName(file);
+              
+            //
+            if(fname.indexOf(".xls")==-1){  
+                file=new File(chooser.getCurrentDirectory(),fname+".xls");  
+                System.out.println("renamed");  
+                System.out.println(file.getName());  
+            }  
+              
+            sqlToExcelWork(file);
+            
+        }
+        
+        return true;
     }
     
     
@@ -2759,12 +2781,12 @@ public class AutoTest extends JFrame {
     }
 
       
-    boolean sqlToExcelWork(){
+    boolean sqlToExcelWork(File file){
     	try {
     		WritableWorkbook wwb = null;
-            
+            //File file = null;
             // 创建可写入的Excel工作簿
-            
+            /*
             File file = new File(TestEntry.jarPath + "\\test.xls");
             if (!file.exists()) {
                 System.out.println("create new excel file");
@@ -2774,6 +2796,10 @@ public class AutoTest extends JFrame {
             	delete(file);
             	file.createNewFile();
             }
+            */
+    		
+    		
+    		
             //以fileName为文件名来创建一个Workbook
             wwb = Workbook.createWorkbook(file);
             

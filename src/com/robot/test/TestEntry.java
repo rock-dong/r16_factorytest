@@ -189,6 +189,7 @@ public class TestEntry extends JFrame{
            // TODO Auto-generated catch block  
            e.printStackTrace();  
         } 
+        
 	}
 	
 		
@@ -217,6 +218,9 @@ public class TestEntry extends JFrame{
 	private void createRclocalFile() {
     	FileOutputStream in;
     	File localOkfile = new File(TestEntry.jarPath + "\\ok.local");
+    	
+    	
+    	
     	if(localOkfile.exists()) {
     		System.out.println("ok.local is exist");
     	}else {
