@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.imageio.ImageIO;
@@ -40,6 +42,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import jxl.Workbook;
+import jxl.write.DateTime;
+import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 public class AutoTest extends JFrame {
 
@@ -173,8 +181,7 @@ public class AutoTest extends JFrame {
 	String gyroYMaxKey = "300";
 	String gyroZMinKey = "-400";
 	String gyroZMaxKey = "500";
-	
-	
+		
 	JButton acceIndication0 = new JButton("");
 	JButton acceIndication1 = new JButton("");
 	JButton acceIndication2 = new JButton("");
@@ -184,15 +191,15 @@ public class AutoTest extends JFrame {
 	JLabel acceTestResult1 = new JLabel("");
 	JLabel acceTestResult2 = new JLabel("");
 	
-	JLabel acceMinTitle = new JLabel("最小值");
-	JLabel acceMaxTitle = new JLabel("最大值");
-	JLabel acceMeasureTitle = new JLabel("加速度");
-	JLabel acceXTitle = new JLabel("X轴");
-	JLabel acceYTitle = new JLabel("Y轴");
-	JLabel acceZTitle = new JLabel("Z轴");
+	JLabel acceMinTitle = new JLabel("最小值", JLabel.CENTER);
+	JLabel acceMaxTitle = new JLabel("最大值", JLabel.CENTER);
+	JLabel acceMeasureTitle = new JLabel("加速度", JLabel.CENTER);
+	JLabel acceXTitle = new JLabel("X轴", JLabel.CENTER);
+	JLabel acceYTitle = new JLabel("Y轴", JLabel.CENTER);
+	JLabel acceZTitle = new JLabel("Z轴", JLabel.CENTER);
 	
 	boolean acceLockFlag = false;
-	JButton acceXYZLockTitle = new JButton("锁定");
+	JButton acceXYZLockBt = new JButton("锁定");
 	
 	JTextField acceXMinValue = new JTextField("60");
 	JTextField acceXMaxValue = new JTextField("290");
@@ -207,15 +214,17 @@ public class AutoTest extends JFrame {
 	String acceYMaxKey = "50";
 	String acceZMinKey = "900";
 	String acceZMaxKey = "1520";
-	
+		
+	JButton sqlToExcelBt = new JButton("开始");
+	JLabel  sqlToExcelTitle = new JLabel("生成Excel表格");
+	JLabel  sqlToExcelResult = new JLabel("");
 	
 	JButton uart1Indication0 = new JButton("");
 	JButton uart1Indication1 = new JButton("");
 	JButton uart1Indication2 = new JButton("");
 	JButton uart1Indication3 = new JButton("");
 	JButton uart1Indication4 = new JButton("");
-	
-	
+		
 	JButton uart2Indication0 = new JButton("");
 	JButton uart2Indication1 = new JButton("");
 	JButton uart2Indication2 = new JButton("");
@@ -256,6 +265,8 @@ public class AutoTest extends JFrame {
 		loadRecordThread  tThSql = new loadRecordThread();
 		Thread thread3 = new Thread(tThSql);
 		thread3.start();
+		
+		
 		
 		testItem.add(Test_Type.USB_TEST);
 		CbItemListener cbi = new CbItemListener();
@@ -336,7 +347,6 @@ public class AutoTest extends JFrame {
         failNumberTitle.setFont(new Font("Dialog", 1, 30));
         failNumberTitle.setForeground(Color.red);
         
-        
         add(autoTestBt);
         autoTestBt.setBounds(410, 200, 100, 50);
         autoTestBt.setForeground(Color.blue);
@@ -352,9 +362,7 @@ public class AutoTest extends JFrame {
 				
 			}
 		});
-    	
-        
-        
+    	                
         add(autoTestInfo);
         autoTestInfo.setBounds(550, 200, 200, 40);
         autoTestInfo.setForeground(Color.blue);
@@ -851,12 +859,12 @@ public class AutoTest extends JFrame {
         });
         
         
-        add(acceXYZLockTitle);
-        acceXYZLockTitle.setBounds(1050, 495, 100, 25);
-        acceXYZLockTitle.setForeground(Color.blue);
-        acceXYZLockTitle.setBackground(Color.red);
-        acceXYZLockTitle.setFont(new Font("Dialog", 1, 20));
-        acceXYZLockTitle.addActionListener(new ActionListener() {
+        add(acceXYZLockBt);
+        acceXYZLockBt.setBounds(1050, 495, 100, 25);
+        acceXYZLockBt.setForeground(Color.blue);
+        acceXYZLockBt.setBackground(Color.red);
+        acceXYZLockBt.setFont(new Font("Dialog", 1, 20));
+        acceXYZLockBt.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e){
 				System.out.println("auto test start");
@@ -868,8 +876,8 @@ public class AutoTest extends JFrame {
 							acceYMaxValue.setEditable(true);
 							acceZMinValue.setEditable(true);
 							acceZMaxValue.setEditable(true);
-							acceXYZLockTitle.setText("锁定");
-							acceXYZLockTitle.setBackground(Color.red);
+							acceXYZLockBt.setText("锁定");
+							acceXYZLockBt.setBackground(Color.red);
 							acceLockFlag = false;
 						} else {
 							acceXMinValue.setEditable(false);
@@ -878,8 +886,8 @@ public class AutoTest extends JFrame {
 							acceYMaxValue.setEditable(false);
 							acceZMinValue.setEditable(false);
 							acceZMaxValue.setEditable(false);
-							acceXYZLockTitle.setBackground(Color.green);
-							acceXYZLockTitle.setText("解锁");
+							acceXYZLockBt.setBackground(Color.green);
+							acceXYZLockBt.setText("解锁");
 							acceLockFlag = true;
 						}
 				
@@ -887,7 +895,26 @@ public class AutoTest extends JFrame {
 		});
         
         
+        add(sqlToExcelTitle);
+        sqlToExcelTitle.setBounds(750, 620, 150, 25);
+        sqlToExcelTitle.setFont(new Font("Dialog", 1, 20));
         
+        add(sqlToExcelBt);
+        sqlToExcelBt.setBounds(900, 610, 100, 40);
+        sqlToExcelBt.setFont(new Font("Dialog", 1, 30));
+        sqlToExcelBt.setForeground(Color.blue);
+        sqlToExcelBt.setBackground(Color.green);
+        sqlToExcelBt.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e){
+				System.out.println("auto test start");
+				sqlToExcelThread  tThSqlToExcel = new sqlToExcelThread();
+				Thread thread4 = new Thread(tThSqlToExcel);
+				thread4.start();
+			}
+		});
+        add(sqlToExcelResult);
+        sqlToExcelResult.setBounds(950, 620, 100, 25);
         
         add(uart1Indication0);
         uart1Indication0.setBounds(500, 300, 20, 30);
@@ -2486,7 +2513,7 @@ public class AutoTest extends JFrame {
 			
 			database.OpenRecord(dbName);
 			
-			savedRecord = database.FetchAll();
+			
 			passRecord = database.QueryByFilter("RESULT == 1");
 			failRecord = database.QueryByFilter("RESULT == 0");
 			passNum = passRecord.size();
@@ -2497,6 +2524,33 @@ public class AutoTest extends JFrame {
 			
 		}
 	}
+    
+    class sqlToExcelThread implements Runnable {
+		@Override
+		public void run () {
+			
+			System.out.println("sqlToExcelThread start ...");
+			autoTestBt.setEnabled(false);
+			if(askUserDoSqlToExcel()){
+				
+				sqlToExcelWork();
+				
+				
+			}
+			autoTestBt.setEnabled(true);
+		}
+	}
+    
+    boolean askUserDoSqlToExcel() {
+    	int ret = JOptionPane.showConfirmDialog(this, "是否转换成Excel表格？", "数据库操作", JOptionPane.INFORMATION_MESSAGE);
+	    System.out.println(" sql 转换  " + ret);
+	    if (ret == 0) {
+	    	return true;
+	    } else {
+	    	return false;
+	    } 	    
+    }
+    
     
     void audioFlash(int num) {
 		switch(num) {
@@ -2704,6 +2758,111 @@ public class AutoTest extends JFrame {
     	database.Close();
     }
 
-        
+      
+    boolean sqlToExcelWork(){
+    	try {
+    		WritableWorkbook wwb = null;
+            
+            // 创建可写入的Excel工作簿
+            
+            File file = new File(TestEntry.jarPath + "\\test.xls");
+            if (!file.exists()) {
+                System.out.println("create new excel file");
+            	file.createNewFile();
+            } else {
+            	System.out.println("delete old excel file");
+            	delete(file);
+            	file.createNewFile();
+            }
+            //以fileName为文件名来创建一个Workbook
+            wwb = Workbook.createWorkbook(file);
+            
+            WritableSheet ws = wwb.createSheet("工厂测试", 0);
+            
+            savedRecord = database.FetchAll();
+            
+            Label labelBar= new Label(0, 0, "条形码");//表示第
+            Label labelSn= new Label(1, 0, "内部唯一号");
+            //Label labelTime= new Label(2, 0, "时间");
+            
+            jxl.write.DateFormat dfsss = new jxl.write.DateFormat("yyyy-MM-dd hh:mm:ss");
+            //SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            
+            //TimeZone zone = TimeZone.getTimeZone("GMT");
+            //sdf.setTimeZone(zone);
+            
+            dfsss.getDateFormat().setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+            WritableCellFormat dataFormat = new WritableCellFormat(dfsss);
+            //Label labelDF = new jxl.write.Label(2, 0, "时间", dataFormat); 
+           
+            Label labelDF = new Label(2, 0, "时间");
+            
+            Label labelResult= new Label(3, 0, "测试结果");
+            
+            Label labelAudio= new Label(4, 0, "声音");//表示第
+            Label labelCamera= new Label(5, 0, "摄像头");
+            Label labelGyro= new Label(6, 0, "角速度");
+            Label labelAcce= new Label(7, 0, "加速度");
+            
+            Label labelUart1= new Label(8, 0, "串口1");
+            Label labelUart2= new Label(9, 0, "串口2");
+            
+            ws.addCell(labelBar);
+            ws.addCell(labelSn);
+            ws.addCell(labelDF);
+            ws.addCell(labelResult);
+            
+            ws.addCell(labelAudio);
+            ws.addCell(labelCamera);
+            ws.addCell(labelGyro);
+            ws.addCell(labelAcce);
+            ws.addCell(labelUart1);
+            ws.addCell(labelUart2);
+            
+            
+            for (int i = 0; i < savedRecord.size(); i++) {
+                
+                Label labelBar_i= new Label(0, i+1, savedRecord.get(i).GetBar());
+                Label labelSn_i= new Label(1, i+1, savedRecord.get(i).GetSn());
+                
+                
+                jxl.write.DateTime labelTime_i = new jxl.write.DateTime(2, i+1, savedRecord.get(i).GetTime(),dataFormat);
+                
+                //labelTime_i.setCellFormat(dataFormat);
+                
+                jxl.write.Number labelResult_i= new jxl.write.Number(3, i+1, savedRecord.get(i).GetResult());
+                jxl.write.Number labelAudio_i= new jxl.write.Number(4, i+1, savedRecord.get(i).GetAudio());
+                jxl.write.Number labelCamera_i= new jxl.write.Number(5, i+1, savedRecord.get(i).GetCamera());
+                jxl.write.Number labelGyro_i= new jxl.write.Number(6, i+1, savedRecord.get(i).GetGyro());
+                jxl.write.Number labelAcce_i= new jxl.write.Number(7, i+1, savedRecord.get(i).GetAcce());
+                jxl.write.Number labelUart1_i= new jxl.write.Number(8, i+1, savedRecord.get(i).GetUart1());
+                jxl.write.Number labelUart2_i= new jxl.write.Number(9, i+1, savedRecord.get(i).GetUart2());
+                
+                ws.addCell(labelBar_i);
+                ws.addCell(labelSn_i);
+                ws.addCell(labelTime_i);
+                ws.addCell(labelResult_i);
+                ws.addCell(labelAudio_i);
+                ws.addCell(labelCamera_i);
+                ws.addCell(labelGyro_i);
+                ws.addCell(labelAcce_i);
+                ws.addCell(labelUart1_i);
+                ws.addCell(labelUart2_i);
+                
+            }
+          
+           //写进文档
+            wwb.write();
+           // 关闭Excel工作簿对象
+            wwb.close();
+            
+    	}catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    	
+    	return true;
+    }
+    
+    
 
 }
