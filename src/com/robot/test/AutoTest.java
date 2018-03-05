@@ -113,6 +113,7 @@ public class AutoTest extends JFrame {
 	String chipid;
 	String barcode;
 	boolean mUsbCheckFail = true;
+	boolean testOngoing = false;
 	JLabel barcodeInfo = new JLabel("");
 	
 	JButton audioIndication0 = new JButton("");
@@ -130,10 +131,12 @@ public class AutoTest extends JFrame {
 	
 	private static final String audioResult0Name = "有";
 	JLabel cbAudioTitle = new JLabel("");
-
+	
+	
 	JCheckBox cbjAudio0 = new JCheckBox(audioResult0Name, false);
 	private static final String audioResult1Name = "没有";
     
+	
     JCheckBox cbjAudio1 = new JCheckBox(audioResult1Name, false);
     
 	JButton cameraIndication0 = new JButton("");
@@ -275,8 +278,10 @@ public class AutoTest extends JFrame {
 		
 		testItem.add(Test_Type.USB_TEST);
 		CbItemListener cbi = new CbItemListener();
-		CbAudioItemListener cbiAudio = new CbAudioItemListener();
-		CbCameraItemListener cbiCamera = new CbCameraItemListener();
+		//CbAudioItemListener cbiAudio = new CbAudioItemListener();
+		CbAudioActionListener cbaAudio = new CbAudioActionListener();
+		//CbCameraItemListener cbiCamera = new CbCameraItemListener();
+		CbCameraActionListener cbaCamera = new CbCameraActionListener();
 		
 		add(autoTestTitle);
 		autoTestTitle.setBounds(400, 0, 300, 30);
@@ -363,7 +368,7 @@ public class AutoTest extends JFrame {
 				TestEntry.writeLog("auto test start");
 				popBarcodeIndication();
 				loadSelectedItem();
-				
+				testOngoing = true;
 				
 			}
 		});
@@ -475,13 +480,14 @@ public class AutoTest extends JFrame {
         cbjAudio0.setBounds(100, 420, 100, 30);
         cbjAudio0.setFont(new Font("Dialog", 1, 20));
         cbjAudio0.setVisible(false);
-        cbjAudio0.addItemListener(cbiAudio);
+        //cbjAudio0.addItemListener(cbiAudio);
+        cbjAudio0.addActionListener(cbaAudio);
         add(cbjAudio1);
         cbjAudio1.setBounds(100, 450, 100, 30);
         cbjAudio1.setFont(new Font("Dialog", 1, 20));
         cbjAudio1.setVisible(false);
-        cbjAudio1.addItemListener(cbiAudio);
-        
+        //cbjAudio1.addItemListener(cbiAudio);
+        cbjAudio1.addActionListener(cbaAudio);
 
 
         
@@ -516,13 +522,14 @@ public class AutoTest extends JFrame {
         cbjCamera0.setBounds(200, 420, 100, 30);
         cbjCamera0.setFont(new Font("Dialog", 1, 20));
         cbjCamera0.setVisible(false);
-        cbjCamera0.addItemListener(cbiCamera);
+        //cbjCamera0.addItemListener(cbiCamera);
+        cbjCamera0.addActionListener(cbaCamera);
         
         add(cbjCamera1);
         cbjCamera1.setBounds(200, 450, 100, 30);
         cbjCamera1.setFont(new Font("Dialog", 1, 20));
         cbjCamera1.setVisible(false);
-        cbjCamera1.addItemListener(cbiCamera);
+        cbjCamera1.addActionListener(cbaCamera);
         
         add(cameraArea);
                 
@@ -1013,21 +1020,109 @@ public class AutoTest extends JFrame {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			// TODO Auto-generated method stub
+			
+			if(testOngoing == false){
+				System.out.println("test not starting, ignore any audio click");
+				return;
+			}else {
+				System.out.println("audio click");
+			}
+			
 			if(e.getSource().equals(cbjAudio0) && cbjAudio0.isSelected()){
 				
-				testResult.put(Test_Type.AUDIO_TEST, 1);
+				if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+            		testResult.remove(Test_Type.AUDIO_TEST);
+            		testResult.put(Test_Type.AUDIO_TEST, 1);
+            	} else {
+				    testResult.put(Test_Type.AUDIO_TEST, 1);
+            	}
 				cbjAudio1.setSelected(false);
 				System.out.println("audio manual check pass");
 			} 
 			
-			if (e.getSource().equals(cbjAudio1) &&  cbjAudio1.isSelected()){
+            if(e.getSource().equals(cbjAudio0) && !cbjAudio0.isSelected()){
 				
-				cbjAudio0.setSelected(false);
-				testResult.put(Test_Type.AUDIO_TEST, 0);
+            	if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+            		testResult.remove(Test_Type.AUDIO_TEST);
+            		testResult.put(Test_Type.AUDIO_TEST, 0);
+            	} else {
+				    testResult.put(Test_Type.AUDIO_TEST, 0);
+            	}
+				
+				cbjAudio1.setSelected(true);
 				System.out.println("audio manual check fail");
 			}
 			
+			
+			if (e.getSource().equals(cbjAudio1) &&  cbjAudio1.isSelected()){
+				
+				cbjAudio0.setSelected(false);
+				if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+            		testResult.remove(Test_Type.AUDIO_TEST);
+            		testResult.put(Test_Type.AUDIO_TEST, 0);
+            	} else {
+				    testResult.put(Test_Type.AUDIO_TEST, 0);
+            	}
+				System.out.println("audio manual check fail");
+			}
+			
+            if (e.getSource().equals(cbjAudio1) &&  !cbjAudio1.isSelected()){
+				
+				cbjAudio0.setSelected(true);
+				if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+            		testResult.remove(Test_Type.AUDIO_TEST);
+            		testResult.put(Test_Type.AUDIO_TEST, 1);
+            	} else {
+				    testResult.put(Test_Type.AUDIO_TEST, 1);
+            	}
+				System.out.println("audio manual check pass");
+			}
+			
 		}
+    }
+    
+    
+    class CbAudioActionListener implements ActionListener  
+    {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			
+			if(testOngoing == false){
+				System.out.println("test not starting, ignore any audio click");
+				return;
+			} else {
+				
+			}
+			
+			if(e.getSource().equals(cbjAudio0)){
+				
+				System.out.println("audio has click ");
+				
+				cbjAudio1.setSelected(false);
+				cbjAudio0.setSelected(true);
+				if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+	            		testResult.remove(Test_Type.AUDIO_TEST);
+	            		testResult.put(Test_Type.AUDIO_TEST, 1);
+	            } else {
+					    testResult.put(Test_Type.AUDIO_TEST, 1);
+	            }
+			}else if(e.getSource().equals(cbjAudio1)){
+				System.out.println("audio none click ");
+			    cbjAudio0.setSelected(false);
+			    cbjAudio1.setSelected(true);
+				if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+	                testResult.remove(Test_Type.AUDIO_TEST);
+	                testResult.put(Test_Type.AUDIO_TEST, 0);
+	            } else {
+					testResult.put(Test_Type.AUDIO_TEST, 0);
+	            }
+			}else {
+				System.out.println("what is the fuck audio click");
+			}
+		} 
+    	
     }
     
     class CbCameraItemListener implements ItemListener  
@@ -1035,21 +1130,110 @@ public class AutoTest extends JFrame {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			// TODO Auto-generated method stub
+			
+			if(testOngoing == false){
+				System.out.println("test not starting, ignore any camera click");
+				return;
+			} else {
+				System.out.println("camera click");
+			}
+			
              if(e.getSource().equals(cbjCamera0) && cbjCamera0.isSelected()){
 				
-				testResult.put(Test_Type.CAMERA_TEST, 1);
+            	 if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+             		testResult.remove(Test_Type.CAMERA_TEST);
+             		testResult.put(Test_Type.CAMERA_TEST, 1);
+             	} else {
+ 				    testResult.put(Test_Type.CAMERA_TEST, 1);
+             	}
 				cbjCamera1.setSelected(false);
 				System.out.println("camera manual check pass");
 			}
 			
+             if(e.getSource().equals(cbjCamera0) && !cbjCamera0.isSelected()){
+ 				
+            	 if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+             		testResult.remove(Test_Type.CAMERA_TEST);
+             		testResult.put(Test_Type.CAMERA_TEST, 0);
+             	} else {
+ 				    testResult.put(Test_Type.CAMERA_TEST, 0);
+             	}
+				cbjCamera1.setSelected(true);
+				System.out.println("camera manual check fail");
+			}
+             
 			if (e.getSource().equals(cbjCamera1) &&  cbjCamera1.isSelected()){
 				
 				cbjCamera0.setSelected(false);
-				testResult.put(Test_Type.CAMERA_TEST, 0);
+				if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+             		testResult.remove(Test_Type.CAMERA_TEST);
+             		testResult.put(Test_Type.CAMERA_TEST, 0);
+             	} else {
+ 				    testResult.put(Test_Type.CAMERA_TEST, 0);
+             	}
 				System.out.println("camera manual check fail");
 			}
 			
+			if(e.getSource().equals(cbjCamera0) && !cbjCamera1.isSelected()){
+ 				
+           	 if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+            		testResult.remove(Test_Type.CAMERA_TEST);
+            		testResult.put(Test_Type.CAMERA_TEST, 1);
+            	} else {
+				    testResult.put(Test_Type.CAMERA_TEST, 1);
+            	}
+				cbjCamera0.setSelected(true);
+				System.out.println("camera manual check pass");
+			}
+			
 		}
+    }
+    
+    
+    class CbCameraActionListener implements ActionListener  
+    {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+
+			// TODO Auto-generated method stub
+			
+			if(testOngoing == false){
+				System.out.println("test not starting, ignore any camera click");
+				return;
+			} else {
+				
+			}
+			
+			if(e.getSource().equals(cbjCamera0)){
+				
+				System.out.println("camera has click ");
+				
+				cbjCamera1.setSelected(false);
+				cbjCamera0.setSelected(true);
+				if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+	            		testResult.remove(Test_Type.CAMERA_TEST);
+	            		testResult.put(Test_Type.CAMERA_TEST, 1);
+	            } else {
+					    testResult.put(Test_Type.CAMERA_TEST, 1);
+	            }
+			}else if(e.getSource().equals(cbjCamera1)){
+				System.out.println("camera none click ");
+			    cbjCamera0.setSelected(false);
+			    cbjCamera1.setSelected(true);
+				if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+	                testResult.remove(Test_Type.CAMERA_TEST);
+	                testResult.put(Test_Type.CAMERA_TEST, 0);
+	            } else {
+					testResult.put(Test_Type.CAMERA_TEST, 0);
+	            }
+			}else {
+				System.out.println("what is the fuck camera click");
+			}
+		
+		} 
+    	
     }
     
     class CbItemListener implements ItemListener  
@@ -1323,6 +1507,8 @@ public class AutoTest extends JFrame {
 		//cbAudio1.setState(false);
 		
 		cbAudioTitle.setText("声音");
+		
+		
 		
     }
     
@@ -1661,10 +1847,10 @@ public class AutoTest extends JFrame {
 						            
 						            }
 						        }else {
-						            
+						        	TestEntry.writeLog("capture fail");
 						        }
 							}else {
-								
+								TestEntry.writeLog("can not find camera driver");
 							}
 						}
 						
@@ -1820,6 +2006,7 @@ public class AutoTest extends JFrame {
 					autoTestInfo.setText("结束");
                     autoTestBt.setEnabled(true);
 					autoTestBt.setBackground(Color.green);
+					testOngoing = false;
 					break;
 				}
 				
@@ -2032,10 +2219,16 @@ public class AutoTest extends JFrame {
     	    } else if(ret ==  1) {
     	    	testResult.put(Test_Type.AUDIO_TEST, 0);
     	    	cbjAudio1.setSelected(true);
+    	    	audioFail();
     	    } else if (ret == 2) {
     	    	testResult.put(Test_Type.AUDIO_TEST, -1);
     	    }
     	}
+    	
+    	if(testItem.contains(Test_Type.AUDIO_TEST) && testResult.containsKey(Test_Type.AUDIO_TEST) && !checkAudioResultRuntime()){
+    		audioFail();
+    	}
+    	
     	
     	if(testItem.contains(Test_Type.CAMERA_TEST) && !testResult.containsKey(Test_Type.CAMERA_TEST)) {
         	
@@ -2047,9 +2240,14 @@ public class AutoTest extends JFrame {
     	    } else if(ret ==  1) {
     	    	testResult.put(Test_Type.CAMERA_TEST, 0);
     	    	cbjCamera1.setSelected(true);
+    	    	cameraFail();
     	    } else if (ret == 2) {
     	    	testResult.put(Test_Type.CAMERA_TEST, -1);
     	    }
+    	}
+    	
+    	if(testItem.contains(Test_Type.CAMERA_TEST) && testResult.containsKey(Test_Type.CAMERA_TEST) && !checkCameraResultRuntime()){
+    		cameraFail();
     	}
     	
     }
@@ -2363,6 +2561,9 @@ public class AutoTest extends JFrame {
 				    case AUDIO_END_OK: {
 				    	audioFlash(8);
 				    	audioFlash(9);
+				    	if(!checkAudioResultRuntime()){
+				    		audioFail();
+				    	}
 				    	flashqueue.removeIf(value -> value==Flash_Type.AUDIO);
 				    	break;
 				    }
@@ -2390,11 +2591,20 @@ public class AutoTest extends JFrame {
 				    case CAMERA_END_OK : {
 				    	cameraFlash(1);
 				    	cameraFlash(2);
+				    	if((testItem.contains(Test_Type.AUDIO_TEST)) && !checkAudioResultRuntime()){
+				    		audioFail();
+				    	}
+				    	if(!checkCameraResultRuntime()){
+				    		cameraFail();
+				    	}
 				    	flashqueue.removeIf(value -> value==Flash_Type.CAMERA);
 				    	break;
 				    }
 				    
 				    case CAMERA_END_FAIL : {
+				    	if((testItem.contains(Test_Type.AUDIO_TEST)) && !checkAudioResultRuntime()){
+				    		audioFail();
+				    	}
 				    	cameraFail();
 				    	flashqueue.removeIf(value -> value==Flash_Type.CAMERA);
 				    	break;
@@ -2413,11 +2623,23 @@ public class AutoTest extends JFrame {
 				    }
 				    
 				    case GYRO_END_OK : {
+				    	if((testItem.contains(Test_Type.AUDIO_TEST)) && !checkAudioResultRuntime()){
+				    		audioFail();
+				    	}
+				    	if((testItem.contains(Test_Type.CAMERA_TEST)) && !checkCameraResultRuntime()){
+				    		cameraFail();
+				    	}
 				    	flashqueue.removeIf(value -> value==Flash_Type.GYRO);
 				    	break;
 				    }
 				    
 				    case GYRO_END_FAIL : {
+				    	if((testItem.contains(Test_Type.AUDIO_TEST)) && !checkAudioResultRuntime()){
+				    		audioFail();
+				    	}
+				    	if((testItem.contains(Test_Type.CAMERA_TEST)) && !checkCameraResultRuntime()){
+				    		cameraFail();
+				    	}
 				    	gyroFail();
 				    	flashqueue.removeIf(value -> value==Flash_Type.GYRO);
 				    	break;
@@ -2436,6 +2658,12 @@ public class AutoTest extends JFrame {
 				    }
 				    
 				    case ACCE_END_OK : {
+				    	if((testItem.contains(Test_Type.AUDIO_TEST)) && !checkAudioResultRuntime()){
+				    		audioFail();
+				    	}
+				    	if((testItem.contains(Test_Type.CAMERA_TEST)) && !checkCameraResultRuntime()){
+				    		cameraFail();
+				    	}
 				    	flashqueue.removeIf(value -> value==Flash_Type.ACCE);
 				    	break;
 				    }
@@ -2576,38 +2804,105 @@ public class AutoTest extends JFrame {
     
     void audioFlash(int num) {
 		switch(num) {
-    	case 0:
-    		audioIndication0.setBackground(Color.green);
-    		break;
-    	case 1:
-    		audioIndication1.setBackground(Color.green);
-    		break;
-    	case 2:
-    		audioIndication2.setBackground(Color.green);
-    		break;
-    	case 3:
-    		audioIndication3.setBackground(Color.green);
-    		break;
-    	case 4:
-    		audioIndication4.setBackground(Color.green);
-    		break;
-    	case 5:
-    		audioIndication5.setBackground(Color.green);
-    		break;
-    	case 6:
-    		audioIndication6.setBackground(Color.green);
-    		break;
-    	case 7:
-    		audioIndication7.setBackground(Color.green);
-    		break;
-    	case 8:
-    		audioIndication8.setBackground(Color.green);
-    		break;
-    	case 9:
-    		audioIndication9.setBackground(Color.green);
+    	case 0:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication0.setBackground(clr);
     		break;
     	}
+    	case 1:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication1.setBackground(clr);
+    		break;
+    	}
+    	case 2:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication2.setBackground(clr);
+    		break;
+    	}
+    	case 3:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication3.setBackground(clr);
+    		break;
+    	}
+    	case 4:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication4.setBackground(clr);
+    		break;
+    	}
+    	case 5:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication5.setBackground(clr);
+    		break;
+    	}
+    	case 6:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication6.setBackground(clr);
+    		break;
+    	}
+    	case 7:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication7.setBackground(clr);
+    		break;
+    	}
+    	case 8:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication8.setBackground(clr);
+    		break;
+    	}
+    	case 9:{
+    		Color clr = Color.green;
+    		if(!checkAudioResultRuntime()){
+    			clr = Color.red;
+    		}
+    		audioIndication9.setBackground(clr);
+    		break;
+    	}
+    	}
 	}
+    
+    boolean checkAudioResultRuntime(){
+    	boolean ret = true;
+    	
+    	if(testResult.containsKey(Test_Type.AUDIO_TEST)){
+    		int value = testResult.get(Test_Type.AUDIO_TEST);
+    		if(value == 0){
+    			ret = false;
+    		}else if(value == 1){
+    			ret = true;
+    		}
+    	}
+    	
+    	return ret;
+    	
+    }
+    
     
     void audioFail() {
 			audioIndication0.setBackground(Color.red);
@@ -2620,24 +2915,58 @@ public class AutoTest extends JFrame {
      		audioIndication7.setBackground(Color.red);
     		audioIndication8.setBackground(Color.red);
     		audioIndication9.setBackground(Color.red);
-    		cbjAudio0.setVisible(false);
-    		cbjAudio1.setVisible(false);
-    		cbAudioTitle.setText("");
+    		cbjAudio0.setSelected(false);
+    		cbjAudio1.setSelected(true);
+   // 		cbjAudio0.setVisible(false);
+   // 		cbjAudio1.setVisible(false);
+   // 		cbAudioTitle.setText("");
 	}
         
     void cameraFlash(int num) {
 		switch(num) {
-    	case 0:
-    		cameraIndication0.setBackground(Color.green);
-    		break;
-    	case 1:
-    		cameraIndication1.setBackground(Color.green);
-    		break;
-    	case 2:
-    		cameraIndication2.setBackground(Color.green);
+    	case 0:{
+    		Color clr = Color.green;
+    		if(!checkCameraResultRuntime()){
+    			clr = Color.red;
+    		}
+    		cameraIndication0.setBackground(clr);
     		break;
     	}
+    	case 1:{
+    		Color clr = Color.green;
+    		if(!checkCameraResultRuntime()){
+    			clr = Color.red;
+    		}
+    		cameraIndication1.setBackground(clr);
+    		break;
+    	}
+    	case 2:{
+    		Color clr = Color.green;
+    		if(!checkCameraResultRuntime()){
+    			clr = Color.red;
+    		}
+    		cameraIndication2.setBackground(clr);
+    		break;
+    	}
+    	}
 	}
+    
+    
+    boolean checkCameraResultRuntime(){
+    	boolean ret = true;
+    	
+    	if(testResult.containsKey(Test_Type.CAMERA_TEST)){
+    		int value = testResult.get(Test_Type.CAMERA_TEST);
+    		if(value == 0){
+    			ret = false;
+    		}else if(value == 1){
+    			ret = true;
+    		}
+    	}
+    	
+    	return ret;
+    	
+    }
     
     void cameraFail() {
     		cameraIndication0.setBackground(Color.red);
@@ -2645,9 +2974,12 @@ public class AutoTest extends JFrame {
     		cameraIndication1.setBackground(Color.red);
     		
     		cameraIndication2.setBackground(Color.red);
-    		cbjCamera0.setVisible(false);
-    		cbjCamera1.setVisible(false);
-    		cbCameraTitle.setText("");
+    		//cbjCamera0.setVisible(false);
+    		//cbjCamera1.setVisible(false);
+    		//cbCameraTitle.setText("");
+    		cbjCamera0.setSelected(false);
+    		cbjCamera1.setSelected(true);
+    		
 	}
     
     void cameraClear() {
@@ -2660,6 +2992,8 @@ public class AutoTest extends JFrame {
 		cbjCamera0.setVisible(false);
 		cbjCamera1.setVisible(false);
 		cbCameraTitle.setText("");
+		deleteCameraFiles();
+		showBmp();
     }
     
     void gyroFlash(int num) {

@@ -334,6 +334,8 @@ public class DeviceControl {
     		System.out.println("camera capture fail");
     		TestEntry.writeLog("cameratest fail");
     		return ret;
+    	} else {
+    		TestEntry.writeLog("camera capture ok");
     	}
     	
     	ret = false;
@@ -352,14 +354,16 @@ public class DeviceControl {
     	        System.out.println(line);  
     	        TestEntry.writeLog(line);
     	        if (line.contains("100%")){  	
-    	        	ret = true;
+    	        	//ret = true;
     	        	TestEntry.writeLog("adb pull yuv ok");
     	        	//break;
     	        }
     	        
     	        line = bufferedReader.readLine();
-    	        //ret = true;
+    	        
     	    }
+    	    
+    	    ret = true;
     	    
     	    System.out.println("adb print end");
     	    process.destroy();
@@ -371,6 +375,7 @@ public class DeviceControl {
     	}
     	
     	
+    	TestEntry.writeLog("camera capture end ...");
     	
     	return ret;
     }

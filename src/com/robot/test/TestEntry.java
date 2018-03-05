@@ -33,6 +33,8 @@ public class TestEntry extends JFrame{
 	JButton manualTestBt = new JButton("开始");
 	JLabel logInfo = new JLabel("日志存放位置");
 	JLabel logpath = new JLabel("");
+	JLabel versionTitle = new JLabel("软件版本号：");
+	JLabel versionInfo = new JLabel("1.0.2");
 	
 	File logfile = null;
         
@@ -139,13 +141,22 @@ public class TestEntry extends JFrame{
 		
 		
 		add(logInfo);
-		logInfo.setBounds(300, 500, 130, 50);
+		logInfo.setBounds(000, 500, 130, 50);
 		logInfo.setFont(new Font("Dialog", 1, 20));
 		logInfo.setForeground(Color.blue);
 		add(logpath);
-		logpath.setBounds(430, 500, 600, 50);
-		logpath.setFont(new Font("Dialog", 1, 20));
-		logpath.setForeground(Color.blue);
+		logpath.setBounds(130, 500, 800, 50);
+		logpath.setFont(new Font("Dialog", 1, 15));
+		logpath.setForeground(Color.red);
+		
+		add(versionTitle);
+		versionTitle.setBounds(000, 000, 130, 50);
+		versionTitle.setFont(new Font("Dialog", 1, 20));
+		versionTitle.setForeground(Color.red);
+		add(versionInfo);
+		versionInfo.setBounds(130, 000, 600, 50);
+		versionInfo.setFont(new Font("Dialog", 1, 20));
+		versionInfo.setForeground(Color.red);
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
